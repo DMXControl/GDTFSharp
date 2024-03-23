@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using System.Text;
 
 namespace GDTFSharp.Nodes
 {
-    public interface INode
+    public interface INode<T>
     {
-        public IEnumerable<INode> Children { get; }
+        public IEnumerable<T> Children { get; }
         
-        public void AddChildren(INode node);
+        public void AddChild(T node);
+        public StringBuilder ToXmlBuilder(StringBuilder builder);
         public string ToXml();
     }
 }

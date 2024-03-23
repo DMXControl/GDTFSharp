@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Text;
 
 namespace GDTFSharp.Nodes
 {
-    public class FixtureTypeNode: INode
+    public class FixtureTypeNode: AbstractNode<IFixtureTypeNodeChild>
     {
         public Name Name { get; }
         public string ShortName { get; }
@@ -14,17 +15,18 @@ namespace GDTFSharp.Nodes
         public int ThumbnailOffsetX { get; }
         public int ThumbnailOffsetY { get; }
         public GUID? RefFT { get; }
-        public YesNo CanHaveChildren { get; }
+        public bool CanHaveChildren { get; }
+        
 
-        public IEnumerable<INode> Children { get; }
-        public void AddChildren(INode node)
+        public override StringBuilder ToXmlBuilder(StringBuilder builder)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public string ToXml()
-        {
-            throw new System.NotImplementedException();
+            builder.Append($"<FixtureType Name=\"{Name.Value}\" ShortName=\"{ShortName}\" LongName=\"{LongName}\" Manufacturer=\"{Manufacturer}\" Description=\"{Description}\" FixtureTypeID=\"{FixtureTypeID.Value}\" Thumbnail=\"{Thumbnail ?? ""}\" ThumbnailOffsetX=\"{ThumbnailOffsetX}\" ThumbnailOffsetY=\"{ThumbnailOffsetY}\" RefFT=\"{RefFT?.Value ?? ""}\" CanHaveChildren=\"{(CanHaveChildren? "Yes" : "No")}\">");
+            foreach (var child in Children)
+            {
+                child.ToXmlBuilder(builder);
+            }
+            builder.Append("</FixtureType>");
+            return builder;
         }
     }
 }
