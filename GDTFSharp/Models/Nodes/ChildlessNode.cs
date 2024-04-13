@@ -9,7 +9,7 @@ namespace GDTFSharp.Nodes
 
         public new void AddChild(T node)
         {
-            throw new System.Exception("ActivationGroup cannot have children");
+            throw new System.Exception("A childless node cannot have children!");
         }
     }
 }

@@ -5,10 +5,12 @@ namespace GDTFSharp.Nodes
     public class Feature: ChildlessNode<Feature>
     {
         public Name Name { get; }
+        public Name GroupName { get; }
         
-        public Feature(Name name)
+        public Feature(Name name, Name groupName)
         {
             Name = name;
+            GroupName = groupName;
         }
         
         public override StringBuilder ToXmlBuilder(StringBuilder builder)

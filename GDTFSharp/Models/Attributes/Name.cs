@@ -17,5 +17,10 @@ namespace GDTFSharp
             }
             Value = value;
         }
+
+        public override string ToString()
+        {
+            return this.Value;
+        }
     }
 }
