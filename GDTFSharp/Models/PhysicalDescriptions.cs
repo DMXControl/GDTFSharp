@@ -19,6 +19,7 @@ namespace GDTFSharp.Models
         /// <summary>Further color spaces. Names must be unique together with the default <see cref="ColorSpace"/>.</summary>
         public IList<ColorSpace> AdditionalColorSpaces { get; } = new List<ColorSpace>();
 
+        /// <summary>The color gamuts of the fixture.</summary>
         public IList<Gamut> Gamuts { get; } = new List<Gamut>();
 
         /// <summary>Nonlinear correlations between DMX input and physical output of a channel.</summary>
@@ -33,6 +34,7 @@ namespace GDTFSharp.Models
         /// </summary>
         public IList<Connector> Connectors { get; } = new List<Connector>();
 
+        /// <summary>General properties: operating temperature, weight, leg height and power consumption.</summary>
         public DeviceProperties Properties { get; } = new DeviceProperties();
 
         public Emitter? FindEmitter(Name name) => Emitters.FirstOrDefault(e => e.Name == name);
@@ -100,10 +102,14 @@ namespace GDTFSharp.Models
         public override string ToString() => Name.Value;
     }
 
+    /// <summary>How to interpolate from the previous <see cref="Measurement"/>.</summary>
     public enum InterpolationTo
     {
+        /// <summary>Linear interpolation.</summary>
         Linear,
+        /// <summary>Keep the previous value until this measurement.</summary>
         Step,
+        /// <summary>Logarithmic interpolation.</summary>
         Log
     }
 
@@ -145,11 +151,15 @@ namespace GDTFSharp.Models
         }
     }
 
+    /// <summary>Predefined or custom color space of a <see cref="ColorSpace"/>.</summary>
     public enum ColorSpaceMode
     {
+        /// <summary>Primaries and white point given by the color space.</summary>
         Custom,
+        /// <summary>sRGB (IEC 61966-2-1:1999); written as <c>sRGB</c>.</summary>
         [System.Xml.Serialization.XmlEnum("sRGB")] SRgb,
         ProPhoto,
+        /// <summary>ANSI E1.54-2015; written as <c>ANSI</c>.</summary>
         [System.Xml.Serialization.XmlEnum("ANSI")] Ansi
     }
 
@@ -199,6 +209,7 @@ namespace GDTFSharp.Models
     {
         public Name Name { get; set; }
 
+        /// <summary>The pieces of the profile; see <see cref="Evaluate"/>.</summary>
         public IList<DmxProfilePoint> Points { get; } = new List<DmxProfilePoint>();
 
         public DmxProfile(Name name)
@@ -251,6 +262,7 @@ namespace GDTFSharp.Models
         /// <summary>Color temperature in Kelvin. Default: 6000.</summary>
         public float ColorTemperature { get; set; } = 6000f;
 
+        /// <summary>The CRIs of the samples at this color temperature.</summary>
         public IList<Cri> Cris { get; } = new List<Cri>();
     }
 
@@ -308,6 +320,7 @@ namespace GDTFSharp.Models
         public bool IsEmpty => OperatingTemperature == null && Weight == null && LegHeight == null && PowerConsumptions.Count == 0;
     }
 
+    /// <summary>Ambient temperature range the device can be operated in (XML node <c>OperatingTemperature</c>).</summary>
     public sealed class OperatingTemperature
     {
         /// <summary>Lowest operating temperature in °C. Default: 0.</summary>

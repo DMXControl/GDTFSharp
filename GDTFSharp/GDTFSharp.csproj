@@ -6,8 +6,38 @@
     <Nullable>enable</Nullable>
     <RootNamespace>GDTFSharp</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Types, enums, navigation and reference members are documented; self-explanatory members (names, constructors,
+         operators, ToString) intentionally are not, so the missing-comment warning is off. -->
     <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>GDTFSharp</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>DMXControl Projects e.V.</Authors>
+    <Copyright>Copyright (c) 2024 DMXControl Projects e.V.</Copyright>
+    <Description>Read, write, create and validate GDTF fixture type files (General Device Type Format, DIN SPEC 15800, GDTF 1.2) in .NET. Typed model with resolved references, .gdtf archive handling, DMX footprint helpers and spec validation.</Description>
+    <PackageTags>gdtf;dmx;lighting;fixture;mvr;din-spec-15800;entertainment</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/DMXControl/GDTFSharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DMXControl/GDTFSharp.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(CI)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="GDTFSharp.Tests" />

@@ -27,10 +27,13 @@ namespace GDTFSharp.Models
         /// <summary>Detailed, complete name. Any characters.</summary>
         public string LongName { get; set; } = string.Empty;
 
+        /// <summary>Manufacturer of the fixture type.</summary>
         public string Manufacturer { get; set; } = string.Empty;
 
+        /// <summary>Description of the fixture type.</summary>
         public string Description { get; set; } = string.Empty;
 
+        /// <summary>Unique ID of the fixture type.</summary>
         public Guid FixtureTypeId { get; set; }
 
         /// <summary>Optional resource name (without extension) of <c>thumbnail.png</c>/<c>.svg</c> in the archive root.</summary>

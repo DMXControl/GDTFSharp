@@ -11,6 +11,7 @@ namespace GDTFSharp.Types
     {
         public const int AddressesPerUniverse = 512;
 
+        /// <summary>The absolute address: (universe - 1) * 512 + address.</summary>
         public int Absolute { get; }
 
         /// <summary>1-based universe of a positive absolute address.</summary>

@@ -15,8 +15,11 @@ namespace GDTFSharp
     /// </summary>
     public sealed class GdtfArchive
     {
+        /// <summary>Name of the description file in the archive root.</summary>
         public const string DescriptionFileName = "description.xml";
+        /// <summary>Folder of wheel slot media.</summary>
         public const string WheelsFolder = "wheels";
+        /// <summary>Folder of the model subfolders.</summary>
         public const string ModelsFolder = "models";
 
         /// <summary>Model folders defined by the spec, below <see cref="ModelsFolder"/>.</summary>
@@ -25,6 +28,7 @@ namespace GDTFSharp
             "3ds", "3ds_low", "3ds_high", "gltf", "gltf_low", "gltf_high", "svg", "svg_side", "svg_front"
         };
 
+        /// <summary>The fixture type description (<c>description.xml</c>).</summary>
         public GdtfDocument Document { get; set; }
 
         /// <summary>
@@ -40,6 +44,7 @@ namespace GDTFSharp
 
         // ---- Reading ----------------------------------------------------------------------------------------------
 
+        /// <summary>Loads a <c>.gdtf</c> file. Problems are collected in the result unless <see cref="GdtfReadOptions.Strict"/> is set.</summary>
         public static GdtfArchiveReadResult Load(string path, GdtfReadOptions? options = null)
         {
             using var stream = File.OpenRead(path);
@@ -95,6 +100,7 @@ namespace GDTFSharp
 
         // ---- Writing ----------------------------------------------------------------------------------------------
 
+        /// <summary>Saves the archive as a <c>.gdtf</c> file, overwriting an existing one.</summary>
         public void Save(string path)
         {
             using var stream = File.Create(path);
@@ -210,11 +216,15 @@ namespace GDTFSharp
             entry.FullName.EndsWith("/", StringComparison.Ordinal) || entry.FullName.EndsWith("\\", StringComparison.Ordinal);
     }
 
+    /// <summary>The result of loading a <c>.gdtf</c> archive: the archive and every problem found in its description.</summary>
     public sealed class GdtfArchiveReadResult
     {
+        /// <summary>The loaded archive.</summary>
         public GdtfArchive Archive { get; }
+        /// <summary>Problems found while reading the description and the archive entries.</summary>
         public IReadOnlyList<GdtfDiagnostic> Diagnostics { get; }
 
+        /// <summary>True when at least one diagnostic is an error.</summary>
         public bool HasErrors => Diagnostics.Any(d => d.Severity == GdtfDiagnosticSeverity.Error);
 
         public GdtfArchiveReadResult(GdtfArchive archive, IReadOnlyList<GdtfDiagnostic> diagnostics)

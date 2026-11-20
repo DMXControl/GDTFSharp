@@ -12,7 +12,7 @@ namespace GDTFSharp.Serialization
     /// give the default and report an error. Every attribute read is remembered so the rest can be reported with
     /// <see cref="ReportUnknownAttributes"/>.
     /// </summary>
-    public sealed class ElementReader
+    internal sealed class ElementReader
     {
         private readonly HashSet<string> _consumed = new HashSet<string>(StringComparer.Ordinal);
         private readonly HashSet<string> _consumedChildren = new HashSet<string>(StringComparer.Ordinal);

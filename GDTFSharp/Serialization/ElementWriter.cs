@@ -7,7 +7,7 @@ using GDTFSharp.Types;
 namespace GDTFSharp.Serialization
 {
     /// <summary>Fluent helper that writes typed values as XML attributes in GDTF format. <c>null</c> values are omitted.</summary>
-    public sealed class ElementWriter
+    internal sealed class ElementWriter
     {
         public XElement Element { get; }
 

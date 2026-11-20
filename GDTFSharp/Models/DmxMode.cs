@@ -12,11 +12,13 @@ namespace GDTFSharp.Models
     {
         public Name Name { get; set; }
 
+        /// <summary>Description of the DMX mode.</summary>
         public string? Description { get; set; }
 
         /// <summary>The first geometry of the device in this mode; only top-level geometries are allowed.</summary>
         public Geometry? Geometry { get; set; }
 
+        /// <summary>The DMX channels; adding one sets its <see cref="DmxChannel.Mode"/>.</summary>
         public ChildCollection<DmxMode, DmxChannel> Channels { get; }
 
         /// <summary>Dependencies between channels, such as a virtual dimmer multiplying color channels.</summary>
@@ -95,6 +97,7 @@ namespace GDTFSharp.Models
     /// <summary>A DMX channel patched for one geometry instance; see <see cref="DmxMode.GetChannelInstances"/>.</summary>
     public sealed class DmxChannelInstance
     {
+        /// <summary>The channel definition.</summary>
         public DmxChannel Channel { get; }
 
         /// <summary>The geometry the channel controls (inside the referenced geometry for referenced instances).</summary>
@@ -103,6 +106,7 @@ namespace GDTFSharp.Models
         /// <summary>The geometry reference this instance belongs to, or <c>null</c> for channels of the mode's own tree.</summary>
         public GeometryReference? Reference { get; }
 
+        /// <summary>The DMX break the addresses are in.</summary>
         public int DmxBreak { get; }
 
         /// <summary>1-based DMX addresses within the break, from most to least significant byte.</summary>
@@ -150,6 +154,7 @@ namespace GDTFSharp.Models
         /// <summary>The geometry this channel controls.</summary>
         public Geometry? Geometry { get; set; }
 
+        /// <summary>The mutually exclusive logical channels; adding one sets its <see cref="LogicalChannel.Channel"/>.</summary>
         public ChildCollection<DmxChannel, LogicalChannel> LogicalChannels { get; }
 
         /// <summary>The DMX mode; set when the channel is added to <see cref="DmxMode.Channels"/>.</summary>
@@ -164,6 +169,7 @@ namespace GDTFSharp.Models
         /// <summary><c>Geometry_Attribute</c> of the first logical channel.</summary>
         public string Name => $"{Geometry?.Name.Value}_{LogicalChannels.FirstOrDefault()?.Name}";
 
+        /// <summary>True for a channel without offsets, i.e. without DMX addresses of its own.</summary>
         public bool IsVirtual => Offsets.Count == 0;
 
         /// <summary>
@@ -180,23 +186,33 @@ namespace GDTFSharp.Models
         /// <summary>All channel functions of all logical channels, in document order.</summary>
         public IEnumerable<ChannelFunction> ChannelFunctions => LogicalChannels.SelectMany(l => l.ChannelFunctions);
 
+        /// <summary><see cref="InitialFunction"/> or the first channel function.</summary>
         public ChannelFunction? EffectiveInitialFunction => InitialFunction ?? ChannelFunctions.FirstOrDefault();
 
         public override string ToString() => Name;
     }
 
+    /// <summary>Whether a logical channel jumps to new values instead of fading.</summary>
     public enum Snap
     {
+        /// <summary>Fade between values. The default.</summary>
         No,
+        /// <summary>Jump to new values.</summary>
         Yes,
+        /// <summary>Jump to new values (same as <see cref="Yes"/>).</summary>
         On,
+        /// <summary>Fade between values (same as <see cref="No"/>).</summary>
         Off
     }
 
+    /// <summary>Which master control of the control system a logical channel reacts to.</summary>
     public enum LogicalChannelMaster
     {
+        /// <summary>No master.</summary>
         None,
+        /// <summary>Reacts to the grand master.</summary>
         Grand,
+        /// <summary>Reacts to group masters.</summary>
         Group
     }
 
@@ -220,8 +236,10 @@ namespace GDTFSharp.Models
         /// <summary>Minimum fade time for changing DMX values, in seconds.</summary>
         public float DmxChangeTimeLimit { get; set; }
 
+        /// <summary>The channel functions in DMX order; adding one sets its <see cref="ChannelFunction.LogicalChannel"/>.</summary>
         public ChildCollection<LogicalChannel, ChannelFunction> ChannelFunctions { get; }
 
+        /// <summary>The DMX channel; set when the logical channel is added to <see cref="DmxChannel.LogicalChannels"/>.</summary>
         public DmxChannel? Channel { get; internal set; }
 
         public LogicalChannel(GdtfAttribute? attribute = null)
@@ -274,10 +292,15 @@ namespace GDTFSharp.Models
         /// <summary>Seconds to accelerate from stop to maximum velocity. Default: 0.</summary>
         public float RealAcceleration { get; set; }
 
+        /// <summary>The wheel the channel sets select slots of.</summary>
         public Wheel? Wheel { get; set; }
+        /// <summary>The emitter this function controls (additive color mixing).</summary>
         public Emitter? Emitter { get; set; }
+        /// <summary>The filter this function controls (subtractive color mixing).</summary>
         public Filter? Filter { get; set; }
+        /// <summary>The color space for indirect color control.</summary>
         public ColorSpace? ColorSpace { get; set; }
+        /// <summary>The gamut of the colors this function can produce.</summary>
         public Gamut? Gamut { get; set; }
 
         /// <summary>The DMX channel or channel function that has to be within <see cref="ModeFrom"/>..<see cref="ModeTo"/> for this function to be active.</summary>
@@ -289,6 +312,7 @@ namespace GDTFSharp.Models
         /// <summary>End of the ModeMaster range. Default: 0/1.</summary>
         public DmxValue ModeTo { get; set; } = new DmxValue(0, 1);
 
+        /// <summary>Nonlinear correlation between DMX value and physical output.</summary>
         public DmxProfile? DmxProfile { get; set; }
 
         /// <summary>Minimum physical value used for the DMX profile; <c>null</c> means <see cref="PhysicalFrom"/>.</summary>
@@ -300,10 +324,13 @@ namespace GDTFSharp.Models
         /// <summary>Name for command based protocols like OSC; <c>null</c> means the node path.</summary>
         public string? CustomName { get; set; }
 
+        /// <summary>The channel sets in DMX order; adding one sets its <see cref="ChannelSet.ChannelFunction"/>.</summary>
         public ChildCollection<ChannelFunction, ChannelSet> ChannelSets { get; }
 
+        /// <summary>Physical ranges of the attribute's sub physical units.</summary>
         public IList<SubChannelSet> SubChannelSets { get; } = new List<SubChannelSet>();
 
+        /// <summary>The logical channel; set when the function is added to <see cref="LogicalChannel.ChannelFunctions"/>.</summary>
         public LogicalChannel? LogicalChannel { get; internal set; }
 
         public ChannelFunction(GdtfAttribute? attribute = null)
@@ -322,7 +349,9 @@ namespace GDTFSharp.Models
         public NodePath Path => NodePath.ParseUnchecked(
             $"{LogicalChannel?.Channel?.Name}.{LogicalChannel?.Name}.{EffectiveName}");
 
+        /// <summary><see cref="Min"/> or <see cref="PhysicalFrom"/>.</summary>
         public float EffectiveMin => Min ?? PhysicalFrom;
+        /// <summary><see cref="Max"/> or <see cref="PhysicalTo"/>.</summary>
         public float EffectiveMax => Max ?? PhysicalTo;
 
         /// <summary>
@@ -368,6 +397,7 @@ namespace GDTFSharp.Models
         /// <summary>1-based slot of the channel function's wheel; see <see cref="WheelSlot"/>.</summary>
         public int? WheelSlotIndex { get; set; }
 
+        /// <summary>The channel function; set when the set is added to <see cref="ChannelFunction.ChannelSets"/>.</summary>
         public ChannelFunction? ChannelFunction { get; internal set; }
 
         public ChannelSet(Name name = default)
@@ -375,7 +405,9 @@ namespace GDTFSharp.Models
             Name = name;
         }
 
+        /// <summary><see cref="PhysicalFrom"/> or that of the channel function.</summary>
         public float EffectivePhysicalFrom => PhysicalFrom ?? ChannelFunction?.PhysicalFrom ?? 0f;
+        /// <summary><see cref="PhysicalTo"/> or that of the channel function.</summary>
         public float EffectivePhysicalTo => PhysicalTo ?? ChannelFunction?.PhysicalTo ?? 1f;
 
         /// <summary>The wheel slot selected by <see cref="WheelSlotIndex"/> on the channel function's wheel.</summary>
@@ -422,9 +454,12 @@ namespace GDTFSharp.Models
         }
     }
 
+    /// <summary>How a <see cref="Relation"/> follower depends on its master.</summary>
     public enum RelationType
     {
+        /// <summary>The follower is multiplied by the master, e.g. a virtual dimmer.</summary>
         Multiply,
+        /// <summary>The master overrides the follower.</summary>
         Override
     }
 
@@ -433,8 +468,10 @@ namespace GDTFSharp.Models
     {
         public Name Name { get; set; }
 
+        /// <summary>The master DMX channel.</summary>
         public DmxChannel? Master { get; set; }
 
+        /// <summary>The channel function that follows the master.</summary>
         public ChannelFunction? Follower { get; set; }
 
         public RelationType Type { get; set; }
@@ -473,6 +510,7 @@ namespace GDTFSharp.Models
         /// <summary>Duration of the step in seconds. Default: 1.</summary>
         public float Duration { get; set; } = 1f;
 
+        /// <summary>The DMX channel values of the step.</summary>
         public IList<MacroDmxValue> Values { get; } = new List<MacroDmxValue>();
     }
 
@@ -481,6 +519,7 @@ namespace GDTFSharp.Models
     {
         public DmxValue Value { get; set; }
 
+        /// <summary>The DMX channel the value is for.</summary>
         public DmxChannel? DmxChannel { get; set; }
 
         public MacroDmxValue(DmxValue value, DmxChannel? channel = null)

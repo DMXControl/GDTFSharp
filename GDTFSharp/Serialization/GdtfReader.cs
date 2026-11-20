@@ -12,9 +12,12 @@ namespace GDTFSharp.Serialization
     /// <summary>The result of reading a description.xml: the document and every problem found on the way.</summary>
     public sealed class GdtfReadResult
     {
+        /// <summary>The document as far as it could be read.</summary>
         public GdtfDocument Document { get; }
+        /// <summary>Problems found while reading, in document order.</summary>
         public IReadOnlyList<GdtfDiagnostic> Diagnostics { get; }
 
+        /// <summary>True when at least one diagnostic is an error.</summary>
         public bool HasErrors => Diagnostics.Any(d => d.Severity == GdtfDiagnosticSeverity.Error);
 
         public GdtfReadResult(GdtfDocument document, IReadOnlyList<GdtfDiagnostic> diagnostics)

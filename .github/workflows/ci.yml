@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # The official GDTF XSD and sample fixtures are third-party files and are not committed.
+      # Without them the XSD and real-file tests are skipped, so CI fetches them.
+      - name: Fetch test data
+        run: ./scripts/fetch-testdata.sh
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Test
+        run: dotnet test -c Release --no-build
+
+      - name: Pack
+        run: dotnet pack GDTFSharp/GDTFSharp.csproj -c Release --no-build -o artifacts
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: artifacts/
+
+  publish:
+    # Push a tag like v0.1.0 to publish. Uses nuget.org trusted publishing: no API key is stored; the job exchanges
+    # its GitHub OIDC token for a short-lived (1 hour) NuGet API key. Needs a trusted publishing policy on nuget.org
+    # for this repository, workflow file "ci.yml" and environment "nuget", and the NUGET_USER secret (the nuget.org
+    # profile name of the policy owner, not an email address).
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    environment: nuget
+    permissions:
+      contents: read
+      id-token: write  # lets the job request a GitHub OIDC token for NuGet/login
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+          path: artifacts/
+
+      - name: Check that the tag matches the package version
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          test -f "artifacts/GDTFSharp.${version}.nupkg" || { echo "No package for version ${version}:"; ls artifacts; exit 1; }
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: NuGet login (OIDC to temporary API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Push to NuGet
+        run: dotnet nuget push "artifacts/*.nupkg" --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate

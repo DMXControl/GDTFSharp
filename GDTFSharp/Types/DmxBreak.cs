@@ -9,11 +9,14 @@ namespace GDTFSharp.Types
     /// </summary>
     public readonly struct DmxBreak : IEquatable<DmxBreak>
     {
+        /// <summary>The break is taken from the GeometryReference.</summary>
         public static readonly DmxBreak Overwrite = new DmxBreak(0, true);
+        /// <summary>Break 1.</summary>
         public static readonly DmxBreak Default = new DmxBreak(1);
 
         private readonly int _number;
 
+        /// <summary>True for <see cref="Overwrite"/>.</summary>
         public bool IsOverwrite { get; }
 
         /// <exception cref="InvalidOperationException">The break is <see cref="Overwrite"/>.</exception>

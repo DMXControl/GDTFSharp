@@ -13,6 +13,7 @@ namespace GDTFSharp.Types
         /// <summary>Maximum supported byte count. GDTF channels are at most 4 bytes; 8 leaves headroom for intermediate math.</summary>
         public const int MaxByteCount = 8;
 
+        /// <summary>The value, in <see cref="ByteCount"/> bytes.</summary>
         public ulong Value { get; }
 
         /// <summary>Number of bytes <see cref="Value"/> is expressed in (1 to <see cref="MaxByteCount"/>).</summary>

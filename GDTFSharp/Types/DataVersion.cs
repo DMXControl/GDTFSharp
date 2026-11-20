@@ -6,8 +6,11 @@ namespace GDTFSharp.Types
     /// <summary>The GDTF <c>DataVersion</c> (<c>Major.Minor</c>, each one byte).</summary>
     public readonly struct DataVersion : IEquatable<DataVersion>, IComparable<DataVersion>
     {
+        /// <summary>GDTF 1.0.</summary>
         public static readonly DataVersion V1_0 = new DataVersion(1, 0);
+        /// <summary>GDTF 1.1 (DIN SPEC 15800:2020).</summary>
         public static readonly DataVersion V1_1 = new DataVersion(1, 1);
+        /// <summary>GDTF 1.2 (DIN SPEC 15800:2022).</summary>
         public static readonly DataVersion V1_2 = new DataVersion(1, 2);
 
         /// <summary>The version this library writes by default.</summary>

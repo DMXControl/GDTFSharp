@@ -12,7 +12,7 @@ namespace GDTFSharp.Serialization
     /// Pass 1 parses all elements, registering every referencable node under its path in a <see cref="ReferenceScope{T}"/>
     /// and queueing every reference. Pass 2 (<see cref="ResolveReferences"/>) looks the queued paths up.
     /// </summary>
-    public sealed class GdtfReadContext
+    internal sealed class GdtfReadContext
     {
         private readonly List<GdtfDiagnostic> _diagnostics = new List<GdtfDiagnostic>();
         private readonly Dictionary<(object Scope, NodePath Path), object> _index = new Dictionary<(object, NodePath), object>();

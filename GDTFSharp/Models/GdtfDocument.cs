@@ -12,6 +12,7 @@ namespace GDTFSharp.Models
         /// </summary>
         public DataVersion DataVersion { get; set; } = DataVersion.Current;
 
+        /// <summary>The fixture type described by the document.</summary>
         public FixtureType FixtureType { get; set; }
 
         public GdtfDocument(FixtureType fixtureType)

@@ -12,6 +12,7 @@ namespace GDTFSharp.Types
     {
         private readonly Name[]? _segments;
 
+        /// <summary>The names of the path, from the starting point down.</summary>
         public IReadOnlyList<Name> Segments => _segments ?? Array.Empty<Name>();
 
         public bool IsEmpty => _segments == null || _segments.Length == 0;

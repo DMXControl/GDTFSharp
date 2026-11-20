@@ -2,6 +2,7 @@ using System;
 
 namespace GDTFSharp.Serialization
 {
+    /// <summary>How serious a <see cref="GdtfDiagnostic"/> is.</summary>
     public enum GdtfDiagnosticSeverity
     {
         /// <summary>Something the library does not understand yet and kept or skipped, e.g. an unknown XML attribute.</summary>
@@ -17,7 +18,9 @@ namespace GDTFSharp.Serialization
     /// <summary>A problem found while reading a GDTF file.</summary>
     public sealed class GdtfDiagnostic
     {
+        /// <summary>How serious the problem is.</summary>
         public GdtfDiagnosticSeverity Severity { get; }
+        /// <summary>What is wrong.</summary>
         public string Message { get; }
 
         /// <summary>Location in the XML, e.g. <c>FixtureType/AttributeDefinitions/Attributes/Attribute[Pan]@Feature</c>.</summary>
@@ -41,6 +44,7 @@ namespace GDTFSharp.Serialization
     /// <summary>Thrown in strict mode on the first <see cref="GdtfDiagnosticSeverity.Error"/>, and for files that cannot be read at all.</summary>
     public sealed class GdtfReadException : Exception
     {
+        /// <summary>The diagnostic that caused the exception, if any.</summary>
         public GdtfDiagnostic? Diagnostic { get; }
 
         public GdtfReadException(GdtfDiagnostic diagnostic) : base(diagnostic.ToString())

@@ -32,6 +32,7 @@ namespace GDTFSharp.Models
         /// <summary>Unique device model ID.</summary>
         public ulong DeviceModelId { get; set; }
 
+        /// <summary>The supported software versions.</summary>
         public IList<RdmSoftwareVersion> SoftwareVersions { get; } = new List<RdmSoftwareVersion>();
     }
 
@@ -40,6 +41,7 @@ namespace GDTFSharp.Models
     {
         public ulong Value { get; set; }
 
+        /// <summary>The DMX personalities of this software version.</summary>
         public IList<DmxPersonality> DmxPersonalities { get; } = new List<DmxPersonality>();
     }
 

@@ -8,6 +8,7 @@ namespace GDTFSharp.Models
     /// <summary>Something that holds child geometries: the <see cref="FixtureType"/> (top level) or a <see cref="Geometry"/>.</summary>
     public interface IGeometryContainer
     {
+        /// <summary>The child geometries; adding one sets its <see cref="Geometry.Parent"/>.</summary>
         ChildCollection<IGeometryContainer, Geometry> Geometries { get; }
     }
 
@@ -37,6 +38,7 @@ namespace GDTFSharp.Models
         /// <summary>The fixture type (for top-level geometries) or the parent geometry; set when added to a collection.</summary>
         public IGeometryContainer? Parent { get; internal set; }
 
+        /// <summary>The parent geometry, or <c>null</c> for a top-level geometry.</summary>
         public Geometry? ParentGeometry => Parent as Geometry;
 
         /// <summary>True for direct children of <see cref="FixtureType.Geometries"/>.</summary>

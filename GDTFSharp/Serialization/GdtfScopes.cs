@@ -3,7 +3,7 @@ using GDTFSharp.Models;
 namespace GDTFSharp.Serialization
 {
     /// <summary>The reference scopes of GDTF Node attributes, one per starting point defined by the spec.</summary>
-    public static class GdtfScopes
+    internal static class GdtfScopes
     {
         /// <summary>Starting point: the ActivationGroups node. Path: <c>ActivationGroup</c>.</summary>
         public static readonly ReferenceScope<ActivationGroup> ActivationGroups = new ReferenceScope<ActivationGroup>("ActivationGroups");

@@ -11,6 +11,7 @@ namespace GDTFSharp.Models
         /// <summary>Display name of the feature group.</summary>
         public string Pretty { get; set; }
 
+        /// <summary>The features of the group; adding one sets its <see cref="Feature.Group"/>.</summary>
         public ChildCollection<FeatureGroup, Feature> Features { get; }
 
         public FeatureGroup(Name name, string? pretty = null)

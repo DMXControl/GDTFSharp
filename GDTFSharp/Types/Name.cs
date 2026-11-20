@@ -16,8 +16,10 @@ namespace GDTFSharp.Types
 
         private readonly string? _value;
 
+        /// <summary>The name; empty for a default <see cref="Name"/>.</summary>
         public string Value => _value ?? string.Empty;
 
+        /// <summary>True for an empty name.</summary>
         public bool IsEmpty => string.IsNullOrEmpty(_value);
 
         /// <exception cref="ArgumentException">The value contains characters not allowed by Annex C.</exception>

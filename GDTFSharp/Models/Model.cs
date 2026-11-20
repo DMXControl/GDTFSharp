@@ -5,18 +5,31 @@ namespace GDTFSharp.Models
     /// <summary>Type of a <see cref="Model"/>, used when there is no model file or to pick a built-in mesh.</summary>
     public enum PrimitiveType
     {
+        /// <summary>No primitive; use the model file.</summary>
         Undefined,
+        /// <summary>Cube.</summary>
         Cube,
+        /// <summary>Cylinder.</summary>
         Cylinder,
+        /// <summary>Sphere.</summary>
         Sphere,
+        /// <summary>Moving head base (GDTF 1.0 mesh).</summary>
         Base,
+        /// <summary>Moving head yoke.</summary>
         Yoke,
+        /// <summary>Moving head head.</summary>
         Head,
+        /// <summary>Scanner (GDTF 1.0 mesh).</summary>
         Scanner,
+        /// <summary>Conventional (GDTF 1.0 mesh).</summary>
         Conventional,
+        /// <summary>Pigtail cable.</summary>
         Pigtail,
+        /// <summary>Moving head base, GDTF 1.1 mesh with the origin at the mounting plate.</summary>
         Base1_1,
+        /// <summary>Scanner, GDTF 1.1 mesh with the origin at the mounting plate.</summary>
         Scanner1_1,
+        /// <summary>Conventional, GDTF 1.1 mesh with the origin at the mounting plate.</summary>
         Conventional1_1
     }
 

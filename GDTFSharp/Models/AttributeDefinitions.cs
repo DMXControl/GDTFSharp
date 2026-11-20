@@ -16,6 +16,7 @@ namespace GDTFSharp.Models
         /// <summary>Logical grouping of attributes into feature groups and features.</summary>
         public IList<FeatureGroup> FeatureGroups { get; } = new List<FeatureGroup>();
 
+        /// <summary>The Fixture Type Attributes.</summary>
         public IList<GdtfAttribute> Attributes { get; } = new List<GdtfAttribute>();
 
         public ActivationGroup? FindActivationGroup(Name name) => ActivationGroups.FirstOrDefault(g => g.Name == name);

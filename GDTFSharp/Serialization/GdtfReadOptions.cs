@@ -1,5 +1,6 @@
 namespace GDTFSharp.Serialization
 {
+    /// <summary>Options for reading GDTF files.</summary>
     public sealed class GdtfReadOptions
     {
         public static GdtfReadOptions Default => new GdtfReadOptions();

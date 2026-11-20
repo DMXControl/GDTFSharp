@@ -10,10 +10,13 @@ namespace GDTFSharp.Validation
     /// <summary>The result of validating a fixture type.</summary>
     public sealed class GdtfValidationResult
     {
+        /// <summary>All errors and warnings.</summary>
         public IReadOnlyList<GdtfDiagnostic> Diagnostics { get; }
 
+        /// <summary>Spec violations.</summary>
         public IEnumerable<GdtfDiagnostic> Errors => Diagnostics.Where(d => d.Severity == GdtfDiagnosticSeverity.Error);
 
+        /// <summary>Discouraged or ambiguous constructs.</summary>
         public IEnumerable<GdtfDiagnostic> Warnings => Diagnostics.Where(d => d.Severity == GdtfDiagnosticSeverity.Warning);
 
         /// <summary>True when there are no errors (warnings are allowed).</summary>

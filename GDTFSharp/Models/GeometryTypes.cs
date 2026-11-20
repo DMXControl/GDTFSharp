@@ -5,11 +5,16 @@ using GDTFSharp.Types;
 
 namespace GDTFSharp.Models
 {
+    /// <summary>Type of light source of a <see cref="Beam"/>.</summary>
     public enum LampType
     {
+        /// <summary>Discharge lamp.</summary>
         Discharge,
+        /// <summary>Tungsten lamp.</summary>
         Tungsten,
+        /// <summary>Halogen lamp.</summary>
         Halogen,
+        /// <summary>LED; written as <c>LED</c>.</summary>
         [XmlEnum("LED")] Led
     }
 
@@ -28,6 +33,7 @@ namespace GDTFSharp.Models
         /// <summary>Pyramid-shaped beam with hard edges.</summary>
         Rectangle,
 
+        /// <summary>Plano-convex: conical beam with soft edges; written as <c>PC</c>.</summary>
         [XmlEnum("PC")] Pc,
         Fresnel,
 
@@ -84,8 +90,10 @@ namespace GDTFSharp.Models
         public Emitter? EmitterSpectrum { get; set; }
     }
 
+    /// <summary>How the color of a <see cref="Laser"/> is defined.</summary>
     public enum LaserColorType
     {
+        /// <summary>RGB laser; written as <c>RGB</c>.</summary>
         [XmlEnum("RGB")] Rgb,
         SingleWaveLength
     }
@@ -130,19 +138,30 @@ namespace GDTFSharp.Models
         public IList<string> Protocols { get; } = new List<string>();
     }
 
+    /// <summary>Type of electrical component of a <see cref="WiringObject"/>.</summary>
     public enum WiringComponentType
     {
+        /// <summary>Input connector.</summary>
         Input,
+        /// <summary>Output connector.</summary>
         Output,
+        /// <summary>Power source.</summary>
         PowerSource,
+        /// <summary>Electrical consumer.</summary>
         Consumer,
+        /// <summary>Fuse.</summary>
         Fuse,
+        /// <summary>Network provider, e.g. a switch.</summary>
         NetworkProvider,
+        /// <summary>Network input.</summary>
         NetworkInput,
+        /// <summary>Network output.</summary>
         NetworkOutput,
+        /// <summary>Network input and output.</summary>
         NetworkInOut
     }
 
+    /// <summary>Fuse rating (tripping characteristic) of a fuse <see cref="WiringObject"/>.</summary>
     public enum FuseRating
     {
         B,
@@ -152,6 +171,7 @@ namespace GDTFSharp.Models
         Z
     }
 
+    /// <summary>Where the pins are placed on a <see cref="WiringObject"/>.</summary>
     public enum PinOrientation
     {
         Left,
@@ -225,6 +245,7 @@ namespace GDTFSharp.Models
     /// <summary>A connection from a pin of a <see cref="WiringObject"/> to a pin of another one (XML node <c>PinPatch</c>).</summary>
     public sealed class PinPatch
     {
+        /// <summary>The wiring object connected through this pin patch.</summary>
         public WiringObject? ToWiringObject { get; set; }
 
         /// <summary>Pin of the parent wiring object.</summary>
@@ -244,15 +265,21 @@ namespace GDTFSharp.Models
         public int? Count { get; set; }
     }
 
+    /// <summary>Type of a <see cref="Structure"/>.</summary>
     public enum StructureType
     {
+        /// <summary>Structure defined by its center line.</summary>
         CenterLineBased,
+        /// <summary>Detailed structure.</summary>
         Detail
     }
 
+    /// <summary>Cross section of a <see cref="Structure"/>.</summary>
     public enum CrossSectionType
     {
+        /// <summary>Truss framework.</summary>
         TrussFramework,
+        /// <summary>Tube.</summary>
         Tube
     }
 
@@ -262,6 +289,7 @@ namespace GDTFSharp.Models
         public Structure(Name name) : base(name) { }
         public override string ElementName => "Structure";
 
+        /// <summary>The linked geometry.</summary>
         public Geometry? LinkedGeometry { get; set; }
 
         public StructureType? StructureType { get; set; }
@@ -278,9 +306,12 @@ namespace GDTFSharp.Models
         public string? TrussCrossSection { get; set; }
     }
 
+    /// <summary>Type of a <see cref="Support"/>.</summary>
     public enum SupportType
     {
+        /// <summary>Rope or hoist.</summary>
         Rope,
+        /// <summary>Ground support.</summary>
         GroundSupport
     }
 
