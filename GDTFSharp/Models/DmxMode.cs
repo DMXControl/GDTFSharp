@@ -253,8 +253,14 @@ namespace GDTFSharp.Models
         /// <summary>Start DMX value. The end is the next function's start - 1 or the channel maximum (<see cref="DmxTo"/>). Default: 0/1.</summary>
         public DmxValue DmxFrom { get; set; } = new DmxValue(0, 1);
 
-        /// <summary>DMX value set when the control system activates this function.</summary>
-        public DmxValue Default { get; set; } = new DmxValue(0, 1);
+        private DmxValue? _default;
+
+        /// <summary>DMX value set when the control system activates this function. Until it is set, it is <see cref="DmxFrom"/>.</summary>
+        public DmxValue Default
+        {
+            get => _default ?? DmxFrom;
+            set => _default = value;
+        }
 
         /// <summary>Physical start value. Default: 0.</summary>
         public float PhysicalFrom { get; set; }

@@ -154,13 +154,50 @@ namespace GDTFSharp
         public byte[]? GetThumbnail(string extension) =>
             Document.FixtureType.Thumbnail is { } name && TryGetResource("", name, extension, out _, out var content) ? content : null;
 
-        /// <summary>A wheel slot's media file. Annex E defines PNG for wheel slot images.</summary>
-        public byte[]? GetWheelMedia(string mediaFileName, string extension = "png") =>
-            TryGetResource(WheelsFolder, mediaFileName, extension, out _, out var content) ? content : null;
+        /// <summary>
+        /// A wheel slot's media file. Annex E defines PNG for wheel slot images. Names that wrongly include a folder
+        /// (e.g. <c>Vendor/gobo1</c>) are also looked up by their file name alone.
+        /// </summary>
+        public byte[]? GetWheelMedia(string mediaFileName, string extension = "png")
+        {
+            if (TryGetResource(WheelsFolder, mediaFileName, extension, out _, out var content)) return content;
+            var fileName = mediaFileName.Replace('\\', '/').Split('/').Last();
+            return fileName != mediaFileName && TryGetResource(WheelsFolder, fileName, extension, out _, out content) ? content : null;
+        }
 
         /// <summary>A model file from one of the <see cref="ModelSubfolders"/>, e.g. <c>GetModelFile("gltf", "base", "glb")</c>.</summary>
         public byte[]? GetModelFile(string subfolder, string file, string? extension = null) =>
             TryGetResource(ModelsFolder + "/" + subfolder, file, extension, out _, out var content) ? content : null;
+
+        /// <summary>
+        /// Validates the fixture type (see <see cref="Validation.GdtfValidator"/>) and checks that the resources it names
+        /// are in the archive: the thumbnail, wheel slot media and model files.
+        /// </summary>
+        public Validation.GdtfValidationResult Validate()
+        {
+            var diagnostics = Validation.GdtfValidator.Validate(Document).Diagnostics.ToList();
+            void Warn(string location, string message) =>
+                diagnostics.Add(new GdtfDiagnostic(GdtfDiagnosticSeverity.Warning, message, location));
+
+            var fixture = Document.FixtureType;
+            if (fixture.Thumbnail is { } thumbnail && GetThumbnail("png") == null && GetThumbnail("svg") == null)
+                Warn("FixtureType", $"Thumbnail '{thumbnail}' has neither a .png nor a .svg file in the archive root.");
+
+            foreach (var wheel in fixture.Wheels)
+            foreach (var slot in wheel.Slots.Where(s => s.MediaFileName != null))
+            {
+                if (GetWheelMedia(slot.MediaFileName!) == null)
+                    Warn($"FixtureType/Wheels/Wheel[{wheel.Name}]/Slot[{slot.Name}]", $"MediaFileName '{slot.MediaFileName}' has no {WheelsFolder}/{slot.MediaFileName}.png.");
+            }
+
+            foreach (var model in fixture.Models.Where(m => m.File != null))
+            {
+                if (ModelSubfolders.All(folder => GetModelFile(folder, model.File!) == null))
+                    Warn($"FixtureType/Models/Model[{model.Name}]", $"File '{model.File}' is in none of the {ModelsFolder} folders.");
+            }
+
+            return new Validation.GdtfValidationResult(diagnostics);
+        }
 
         internal static string NormalizePath(string path)
         {
