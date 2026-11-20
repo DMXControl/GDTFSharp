@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GDTF DataVersion="1.2">
+  <FixtureType Name="Minimal LED" ShortName="MinLED" LongName="Minimal LED &amp; Friends &quot;Test&quot;" Manufacturer="GDTFSharp" Description="Hand-written test fixture &lt;1&gt;" FixtureTypeID="308EA87D-7164-42DE-8106-A6D273F57A51" Thumbnail="thumbnail" ThumbnailOffsetX="10" ThumbnailOffsetY="-5" CanHaveChildren="No">
+    <AttributeDefinitions>
+      <ActivationGroups />
+      <FeatureGroups>
+        <FeatureGroup Name="Dimmer" Pretty="Dimmer">
+          <Feature Name="Dimmer" />
+        </FeatureGroup>
+      </FeatureGroups>
+      <Attributes>
+        <Attribute Name="Dimmer" Pretty="Dim" Feature="Dimmer.Dimmer" PhysicalUnit="LuminousIntensity" />
+      </Attributes>
+    </AttributeDefinitions>
+    <Wheels />
+    <Models>
+      <Model Name="Body" Length="0.2" Width="0.2" Height="0.1" PrimitiveType="Cube" />
+    </Models>
+    <Geometries>
+      <Geometry Name="Body" Model="Body" Position="{1,0,0,0}{0,1,0,0}{0,0,1,0}{0,0,0,1}">
+        <Beam Name="Beam" Model="Body" Position="{1,0,0,0}{0,1,0,0}{0,0,1,0}{0,0,0,1}" LampType="LED" PowerConsumption="10" LuminousFlux="1000" ColorTemperature="6000" BeamAngle="25" FieldAngle="25" BeamRadius="0.05" BeamType="Wash" ColorRenderingIndex="100" />
+      </Geometry>
+    </Geometries>
+    <DMXModes>
+      <DMXMode Name="1ch" Geometry="Body">
+        <DMXChannels>
+          <DMXChannel DMXBreak="1" Offset="1" Highlight="255/1" Geometry="Beam">
+            <LogicalChannel Attribute="Dimmer">
+              <ChannelFunction Name="Dimmer" Attribute="Dimmer" DMXFrom="0/1" Default="0/1" PhysicalFrom="0" PhysicalTo="1" />
+            </LogicalChannel>
+          </DMXChannel>
+        </DMXChannels>
+      </DMXMode>
+    </DMXModes>
+    <Revisions>
+      <Revision Text="Created" Date="2026-11-20T12:00:00" />
+    </Revisions>
+  </FixtureType>
+</GDTF>
