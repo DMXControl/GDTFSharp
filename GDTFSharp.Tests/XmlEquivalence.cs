@@ -14,6 +14,21 @@ internal static class XmlEquivalence
     public static readonly IReadOnlyDictionary<(string Element, string Attribute), string> Defaults =
         new Dictionary<(string, string), string>
         {
+            [("*", "Position")] = "{1,0,0,0}{0,1,0,0}{0,0,1,0}{0,0,0,1}",
+            [("Beam", "LampType")] = "Discharge",
+            [("Beam", "PowerConsumption")] = "1000",
+            [("Beam", "LuminousFlux")] = "10000",
+            [("Beam", "ColorTemperature")] = "6000",
+            [("Beam", "BeamAngle")] = "25",
+            [("Beam", "FieldAngle")] = "25",
+            [("Beam", "ThrowRatio")] = "1",
+            [("Beam", "RectangleRatio")] = "1.7777",
+            [("Beam", "BeamRadius")] = "0.05",
+            [("Beam", "BeamType")] = "Wash",
+            [("Beam", "ColorRenderingIndex")] = "100",
+            [("Laser", "ColorType")] = "RGB",
+            [("Break", "DMXOffset")] = "1",
+            [("Break", "DMXBreak")] = "1",
             [("FixtureType", "CanHaveChildren")] = "Yes",
             [("FixtureType", "ThumbnailOffsetX")] = "0",
             [("FixtureType", "ThumbnailOffsetY")] = "0",
@@ -97,7 +112,8 @@ internal static class XmlEquivalence
         foreach (var attribute in written.Attributes())
         {
             if (original.Attribute(attribute.Name) != null) continue;
-            if (!Defaults.TryGetValue((written.Name.LocalName, attribute.Name.LocalName), out var defaultValue) ||
+            if (!(Defaults.TryGetValue((written.Name.LocalName, attribute.Name.LocalName), out var defaultValue) ||
+                  Defaults.TryGetValue(("*", attribute.Name.LocalName), out defaultValue)) ||
                 !SameValue(defaultValue, attribute.Value))
                 differences.Add($"{path}@{attribute.Name}: '{attribute.Value}' was added");
         }

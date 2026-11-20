@@ -42,6 +42,7 @@ namespace GDTFSharp.Serialization
         public ElementWriter Guid(string name, Guid? value) => value == null ? this : String(name, GdtfFormat.FormatGuid(value.Value));
         public ElementWriter Vector2(string name, Vector2 value) => String(name, GdtfFormat.FormatVector2(value));
         public ElementWriter Vector3(string name, Vector3 value) => String(name, GdtfFormat.FormatVector3(value));
+        public ElementWriter Vector3(string name, Vector3? value) => value == null ? this : Vector3(name, value.Value);
         public ElementWriter Matrix(string name, Matrix4x4 value) => String(name, GdtfFormat.FormatMatrix(value));
         public ElementWriter Rotation(string name, RotationMatrix value) => String(name, value.ToString());
         public ElementWriter Color(string name, ColorCIE? value) => String(name, value?.ToString());
@@ -50,6 +51,7 @@ namespace GDTFSharp.Serialization
         public ElementWriter DmxBreak(string name, DmxBreak value) => String(name, value.ToString());
         public ElementWriter IntList(string name, IReadOnlyCollection<int> value) => String(name, GdtfFormat.FormatIntList(value));
         public ElementWriter Enum<T>(string name, T value) where T : struct, System.Enum => String(name, GdtfFormat.FormatEnum(value));
+        public ElementWriter Enum<T>(string name, T? value) where T : struct, System.Enum => value == null ? this : Enum(name, value.Value);
 
         public ElementWriter Child(XElement? child)
         {

@@ -35,6 +35,12 @@ namespace GDTFSharp.Serialization
         /// <summary>Starting point: the Connectors node. Path: <c>Connector</c>.</summary>
         public static readonly ReferenceScope<Connector> Connectors = new ReferenceScope<Connector>("Connectors");
 
+        /// <summary>Every geometry of the tree, by its unique name.</summary>
+        public static readonly ReferenceScope<Geometry> Geometries = new ReferenceScope<Geometry>("Geometries");
+
+        /// <summary>Top-level geometries only, by name (GeometryReference, DMXMode).</summary>
+        public static readonly ReferenceScope<Geometry> TopLevelGeometries = new ReferenceScope<Geometry>("top-level Geometries");
+
         /// <summary>Starting point: the Models node. Path: <c>Model</c>.</summary>
         public static readonly ReferenceScope<Model> Models = new ReferenceScope<Model>("Models");
     }

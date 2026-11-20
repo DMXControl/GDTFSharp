@@ -156,6 +156,10 @@ namespace GDTFSharp.Serialization
             return Value<Guid?>(name, GdtfFormat.TryParseGuid, null, required);
         }
 
+        public Vector3? OptionalVector3(string name) => Optional<Vector3>(name, GdtfFormat.TryParseVector3);
+
+        public T? OptionalEnum<T>(string name) where T : struct, System.Enum => Optional<T>(name, GdtfFormat.TryParseEnum);
+
         public Vector2 Vector2(string name, Vector2 defaultValue = default, bool required = false) =>
             Value<Vector2>(name, GdtfFormat.TryParseVector2, defaultValue, required);
 
@@ -202,6 +206,13 @@ namespace GDTFSharp.Serialization
         {
             _consumedChildren.Add(name);
             return Element.Elements(name).Select(e => new ElementReader(e, Context)).ToList();
+        }
+
+        /// <summary>The child elements whose names are in <paramref name="names"/>, in document order.</summary>
+        public IEnumerable<ElementReader> ChildrenInOrder(ICollection<string> names)
+        {
+            foreach (var name in names) _consumedChildren.Add(name);
+            return Element.Elements().Where(e => names.Contains(e.Name.LocalName)).Select(e => new ElementReader(e, Context)).ToList();
         }
 
         /// <summary>

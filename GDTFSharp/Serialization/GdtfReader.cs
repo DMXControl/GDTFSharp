@@ -122,6 +122,9 @@ namespace GDTFSharp.Serialization
                     case "PhysicalDescriptions" when !readSections.Contains(name):
                         ReadPhysicalDescriptions(new ElementReader(section, context), fixtureType.PhysicalDescriptions);
                         break;
+                    case "Geometries" when !readSections.Contains(name):
+                        ReadGeometries(new ElementReader(section, context), fixtureType);
+                        break;
                     case "Models" when !readSections.Contains(name):
                         ReadModels(new ElementReader(section, context), fixtureType);
                         break;

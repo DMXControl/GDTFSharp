@@ -199,23 +199,32 @@ namespace GDTFSharp.Types
         public static string FormatColorArray(IEnumerable<ColorCIE> colors) => string.Concat(colors.Select(c => "{" + c + "}"));
 
         /// <summary>
-        /// Parses a GDTF <c>Matrix</c>. Rows of the file map to rows of <see cref="Matrix4x4"/> (row i, column j to Mij),
-        /// so the translation ends up in M14, M24, M34. <c>None</c> gives the identity.
+        /// Parses a GDTF <c>Matrix</c> into a <see cref="Matrix4x4"/> in System.Numerics convention. GDTF stores the rows of
+        /// a column-vector transform (rotation in the first three columns, translation in the fourth); System.Numerics uses
+        /// row vectors, so the result is the transpose: the translation ends up in M41, M42, M43 as with
+        /// <see cref="Matrix4x4.CreateTranslation(Vector3)"/>, and <see cref="Vector3.Transform(Vector3, Matrix4x4)"/> applies it.
+        /// <c>None</c> gives the identity.
         /// </summary>
         public static bool TryParseMatrix(string? value, out Matrix4x4 result)
         {
             result = Matrix4x4.Identity;
             if (value != null && value.Trim() == "None") return true;
             if (!TryParseBracketedRows(value, 4, 4, out var m)) return false;
-            result = new Matrix4x4(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15]);
+            result = Matrix4x4.Transpose(
+                new Matrix4x4(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15]));
             return true;
         }
 
-        public static string FormatMatrix(Matrix4x4 m) => FormatBracketedRows(new[]
+        /// <summary>Writes a System.Numerics transform as a GDTF <c>Matrix</c> (the inverse of <see cref="TryParseMatrix"/>).</summary>
+        public static string FormatMatrix(Matrix4x4 transform)
+        {
+            var m = Matrix4x4.Transpose(transform);
+            return FormatBracketedRows(new[]
         {
             m.M11, m.M12, m.M13, m.M14, m.M21, m.M22, m.M23, m.M24,
             m.M31, m.M32, m.M33, m.M34, m.M41, m.M42, m.M43, m.M44
         }, 4);
+        }
 
         /// <summary>Parses a comma-separated integer list such as a DMXChannel <c>Offset</c>. <c>None</c> or empty gives an empty list.</summary>
         public static bool TryParseIntList(string? value, out int[] result)

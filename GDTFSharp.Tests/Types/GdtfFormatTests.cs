@@ -111,14 +111,29 @@ public class GdtfFormatTests
     }
 
     [Fact]
-    public void Matrix_RoundTripsRowMajorWithTranslationInLastColumn()
+    public void Matrix_ConvertsGdtfLayoutToNumericsConvention()
     {
+        // GDTF: translation in the 4th column of the written rows.
         const string text = "{1,0,0,0.5}{0,1,0,-0.25}{0,0,1,2}{0,0,0,1}";
         Assert.True(GdtfFormat.TryParseMatrix(text, out var matrix));
-        Assert.Equal(0.5f, matrix.M14);
-        Assert.Equal(-0.25f, matrix.M24);
-        Assert.Equal(2f, matrix.M34);
+        Assert.Equal(Matrix4x4.CreateTranslation(0.5f, -0.25f, 2f), matrix);
+        Assert.Equal(new Vector3(1.5f, -0.25f, 2f), Vector3.Transform(Vector3.UnitX, matrix));
         Assert.Equal(text, GdtfFormat.FormatMatrix(matrix));
+    }
+
+    [Fact]
+    public void Matrix_RotationMatchesSpecLayout()
+    {
+        // 90° around Z in GDTF (column-vector) layout: first column is the image of X = (0,1,0).
+        Assert.True(GdtfFormat.TryParseMatrix("{0,-1,0,0}{1,0,0,0}{0,0,1,0}{0,0,0,1}", out var matrix));
+        var x = Vector3.Transform(Vector3.UnitX, matrix);
+        Assert.Equal(0f, x.X, 5);
+        Assert.Equal(1f, x.Y, 5);
+        // Matrix4x4.CreateRotationZ produces the same transform.
+        var rotation = Matrix4x4.CreateRotationZ(MathF.PI / 2);
+        for (var row = 0; row < 4; row++)
+        for (var column = 0; column < 4; column++)
+            Assert.Equal(matrix[row, column], rotation[row, column], 5);
     }
 
     [Theory]

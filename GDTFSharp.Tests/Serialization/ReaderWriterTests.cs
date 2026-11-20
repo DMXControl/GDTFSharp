@@ -96,7 +96,6 @@ public class ReaderWriterTests
     {
         var fixture = new FixtureType(new Name("Test"), Guid.NewGuid());
         fixture.UnparsedSections.Add(new XElement("DMXModes", new XElement("DMXMode")));
-        fixture.UnparsedSections.Add(new XElement("Geometries"));
         var root = GdtfWriter.ToXDocument(new GdtfDocument(fixture)).Root!;
         var sections = root.Element("FixtureType")!.Elements().ToList();
         Assert.Equal(FixtureType.SectionOrder, sections.Select(e => e.Name.LocalName));

@@ -61,6 +61,7 @@ namespace GDTFSharp.Serialization
             sections.Add(WriteWheels(fixtureType));
             sections.Add(WritePhysicalDescriptions(fixtureType.PhysicalDescriptions));
             sections.Add(WriteModels(fixtureType));
+            sections.Add(WriteGeometries(fixtureType));
             sections.Add(WriteRevisions(fixtureType));
             sections.Add(WriteFTPresets(fixtureType));
             sections.Add(WriteProtocols(fixtureType.Protocols));

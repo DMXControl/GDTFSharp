@@ -17,7 +17,8 @@ Targets GDTF 1.2 (DIN SPEC 15800:2022). Older files (1.0/1.1) are read; files ar
 | Protocols (RDM, Art-Net, sACN) | done; PosiStageNet, OpenSoundControl and CITP are undefined in the spec and kept verbatim |
 | FTPresets | undefined in the spec; kept verbatim |
 | PhysicalDescriptions (emitters, filters, measurements, color spaces, gamuts, DMX profiles, CRIs, connectors, properties) | done |
-| Geometries, DMXModes | not yet modelled; kept verbatim on read and written back unchanged |
+| Geometries (all 18 geometry types, geometry references with breaks, laser protocols, pin patches) | done |
+| DMXModes | not yet modelled; kept verbatim on read and written back unchanged |
 
 ## Usage
 
@@ -33,6 +34,10 @@ foreach (var attribute in fixtureType.AttributeDefinitions.Attributes)
 
 result.Archive.Save("copy.gdtf");
 ```
+
+Geometry positions are `System.Numerics.Matrix4x4` transforms in the usual .NET convention (translation in
+M41–M43, `Vector3.Transform` applies them, `child * parent` composes them). The reader and writer convert from and to
+GDTF's matrix layout, which is the transpose. `geometry.AbsolutePosition` gives the transform relative to the fixture.
 
 Reading is lenient by default: problems are collected as diagnostics. Pass `new GdtfReadOptions { Strict = true }`
 to throw on the first error.

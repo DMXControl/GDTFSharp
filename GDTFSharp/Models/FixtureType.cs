@@ -7,7 +7,7 @@ using GDTFSharp.Types;
 namespace GDTFSharp.Models
 {
     /// <summary>The <c>FixtureType</c> node: the starting point of the description of a fixture type.</summary>
-    public sealed class FixtureType
+    public sealed class FixtureType : IGeometryContainer
     {
         /// <summary>Child sections in the order the spec mandates (DIN SPEC 15800, Table 4).</summary>
         public static readonly IReadOnlyList<string> SectionOrder = new[]
@@ -57,6 +57,18 @@ namespace GDTFSharp.Models
         /// <summary>Emitters, filters, color spaces, gamuts, DMX profiles, CRIs, connectors and device properties.</summary>
         public PhysicalDescriptions PhysicalDescriptions { get; } = new PhysicalDescriptions();
 
+        /// <summary>
+        /// Top-level geometries; each is the root of a tree describing physically separated parts of the device.
+        /// Geometry names are unique within the whole fixture type.
+        /// </summary>
+        public ChildCollection<IGeometryContainer, Geometry> Geometries { get; }
+
+        /// <summary>Every geometry of the fixture type, depth first in document order.</summary>
+        public IEnumerable<Geometry> AllGeometries() => Geometries.SelectMany(g => new[] { g }.Concat(g.Descendants()));
+
+        /// <summary>Finds a geometry anywhere in the tree by its (unique) name.</summary>
+        public Geometry? FindGeometry(Name name) => AllGeometries().FirstOrDefault(g => g.Name == name);
+
         /// <summary>Models of the physically separated parts of the device.</summary>
         public IList<Model> Models { get; } = new List<Model>();
 
@@ -87,6 +99,7 @@ namespace GDTFSharp.Models
         {
             Name = name;
             FixtureTypeId = fixtureTypeId;
+            Geometries = Geometry.CreateGeometryCollection(this);
         }
     }
 }
