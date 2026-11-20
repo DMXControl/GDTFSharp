@@ -58,7 +58,19 @@ namespace GDTFSharp.Serialization
 
             var sections = new List<XElement>();
             sections.Add(WriteAttributeDefinitions(fixtureType.AttributeDefinitions));
-            sections.AddRange(fixtureType.UnparsedSections.Select(s => new XElement(s)));
+            sections.Add(WriteWheels(fixtureType));
+            sections.Add(WritePhysicalDescriptions(fixtureType.PhysicalDescriptions));
+            sections.Add(WriteModels(fixtureType));
+            sections.Add(WriteRevisions(fixtureType));
+            sections.Add(WriteFTPresets(fixtureType));
+            sections.Add(WriteProtocols(fixtureType.Protocols));
+            foreach (var unparsed in fixtureType.UnparsedSections)
+            {
+                if (sections.Any(s => s.Name == unparsed.Name))
+                    throw new InvalidOperationException(
+                        $"UnparsedSections contains '{unparsed.Name.LocalName}', which is modelled; use the FixtureType property instead.");
+                sections.Add(new XElement(unparsed));
+            }
 
             foreach (var mandatory in FixtureType.MandatorySections)
             {

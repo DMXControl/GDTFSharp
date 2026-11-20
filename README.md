@@ -13,7 +13,11 @@ Targets GDTF 1.2 (DIN SPEC 15800:2022). Older files (1.0/1.1) are read; files ar
 | `.gdtf` archive read/write, `description.xml` reader/writer, diagnostics | done |
 | FixtureType header | done |
 | AttributeDefinitions (ActivationGroups, FeatureGroups/Features, Attributes, SubPhysicalUnits) | done |
-| Wheels, PhysicalDescriptions, Models, Geometries, DMXModes, Revisions, FTPresets, Protocols | not yet modelled; kept verbatim on read and written back unchanged |
+| Wheels (slots, prism facets, animation systems), Models, Revisions | done |
+| Protocols (RDM, Art-Net, sACN) | done; PosiStageNet, OpenSoundControl and CITP are undefined in the spec and kept verbatim |
+| FTPresets | undefined in the spec; kept verbatim |
+| PhysicalDescriptions (emitters, filters, measurements, color spaces, gamuts, DMX profiles, CRIs, connectors, properties) | done |
+| Geometries, DMXModes | not yet modelled; kept verbatim on read and written back unchanged |
 
 ## Usage
 

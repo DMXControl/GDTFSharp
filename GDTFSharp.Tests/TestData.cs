@@ -1,3 +1,5 @@
+using GDTFSharp.Serialization;
+
 namespace GDTFSharp.Tests;
 
 internal static class TestData
@@ -30,6 +32,23 @@ internal static class TestData
             return data;
         }
     }
+
+    /// <summary>
+    /// Defects in the third-party sample files that the reader is right to report, by file name: a substring of the
+    /// diagnostic message and a substring of the XML path where the written file legitimately differs.
+    /// </summary>
+    public static readonly IReadOnlyDictionary<string, (string Message, string Path)[]> KnownDefects =
+        new Dictionary<string, (string, string)[]>
+        {
+            // A slot color written by a C++ tool from NaN values; the reader drops it, so the slot is white.
+            ["allWorking.gdtf"] = new[] { ("'-nan(ind),-nan(ind),0.000000'", "Slot[Tokyo Blue]@Color") }
+        };
+
+    public static bool IsKnownDefect(string fileName, GdtfDiagnostic diagnostic) =>
+        KnownDefects.TryGetValue(fileName, out var defects) && defects.Any(d => diagnostic.Message.Contains(d.Message));
+
+    public static Func<string, bool> KnownDifferences(string fileName) => path =>
+        KnownDefects.TryGetValue(fileName, out var defects) && defects.Any(d => path.Contains(d.Path));
 
     public static string RequireExternal(string fileName)
     {

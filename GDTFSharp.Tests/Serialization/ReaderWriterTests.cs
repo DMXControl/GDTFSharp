@@ -95,11 +95,20 @@ public class ReaderWriterTests
     public void WritesMandatorySectionsInSpecOrder()
     {
         var fixture = new FixtureType(new Name("Test"), Guid.NewGuid());
-        fixture.UnparsedSections.Add(new XElement("Revisions"));
-        fixture.UnparsedSections.Add(new XElement("Wheels"));
+        fixture.UnparsedSections.Add(new XElement("DMXModes", new XElement("DMXMode")));
+        fixture.UnparsedSections.Add(new XElement("Geometries"));
         var root = GdtfWriter.ToXDocument(new GdtfDocument(fixture)).Root!;
-        var sections = root.Element("FixtureType")!.Elements().Select(e => e.Name.LocalName);
-        Assert.Equal(new[] { "AttributeDefinitions", "Wheels", "Geometries", "DMXModes", "Revisions" }, sections);
+        var sections = root.Element("FixtureType")!.Elements().ToList();
+        Assert.Equal(FixtureType.SectionOrder, sections.Select(e => e.Name.LocalName));
+        Assert.True(sections.Single(s => s.Name == "DMXModes").HasElements);
+    }
+
+    [Fact]
+    public void UnparsedCopyOfModelledSectionThrows()
+    {
+        var fixture = new FixtureType(new Name("Test"), Guid.NewGuid());
+        fixture.UnparsedSections.Add(new XElement("Wheels"));
+        Assert.Throws<InvalidOperationException>(() => GdtfWriter.ToXDocument(new GdtfDocument(fixture)));
     }
 
     [Fact]

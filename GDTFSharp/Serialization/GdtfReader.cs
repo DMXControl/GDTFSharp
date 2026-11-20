@@ -116,6 +116,24 @@ namespace GDTFSharp.Serialization
                     case "AttributeDefinitions" when !readSections.Contains(name):
                         ReadAttributeDefinitions(new ElementReader(section, context), fixtureType.AttributeDefinitions);
                         break;
+                    case "Wheels" when !readSections.Contains(name):
+                        ReadWheels(new ElementReader(section, context), fixtureType);
+                        break;
+                    case "PhysicalDescriptions" when !readSections.Contains(name):
+                        ReadPhysicalDescriptions(new ElementReader(section, context), fixtureType.PhysicalDescriptions);
+                        break;
+                    case "Models" when !readSections.Contains(name):
+                        ReadModels(new ElementReader(section, context), fixtureType);
+                        break;
+                    case "Revisions" when !readSections.Contains(name):
+                        ReadRevisions(new ElementReader(section, context), fixtureType);
+                        break;
+                    case "FTPresets" when !readSections.Contains(name):
+                        ReadFTPresets(new ElementReader(section, context), fixtureType);
+                        break;
+                    case "Protocols" when !readSections.Contains(name):
+                        ReadProtocols(new ElementReader(section, context), fixtureType.Protocols);
+                        break;
                     default:
                         if (index >= 0 && readSections.Contains(name))
                         {

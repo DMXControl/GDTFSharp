@@ -125,6 +125,17 @@ namespace GDTFSharp.Types
 
         public static string FormatFloatList(IEnumerable<float> values) => string.Join(",", values.Select(FormatFloat));
 
+        /// <summary>Parses two comma-separated floats, e.g. an AnimationSystem point.</summary>
+        public static bool TryParseVector2(string? value, out Vector2 result)
+        {
+            result = Vector2.Zero;
+            if (!TryParseFloatList(value, 2, out var v)) return false;
+            result = new Vector2(v[0], v[1]);
+            return true;
+        }
+
+        public static string FormatVector2(Vector2 value) => FormatFloatList(new[] { value.X, value.Y });
+
         public static bool TryParseVector3(string? value, out Vector3 result)
         {
             result = Vector3.Zero;
@@ -166,6 +177,26 @@ namespace GDTFSharp.Types
 
             return builder.ToString();
         }
+
+        /// <summary>Parses an array of ColorCIE written as <c>{x,y,Y}{x,y,Y}…</c>. Empty gives an empty list.</summary>
+        public static bool TryParseColorArray(string? value, out ColorCIE[] result)
+        {
+            result = Array.Empty<ColorCIE>();
+            if (value == null) return false;
+            if (value.Trim().Length == 0) return true;
+            var matches = BracketedRow.Matches(value);
+            if (matches.Count == 0 || BracketedRow.Replace(value, "").Trim().Length != 0) return false;
+            var colors = new ColorCIE[matches.Count];
+            for (var i = 0; i < matches.Count; i++)
+            {
+                if (!ColorCIE.TryParse(matches[i].Groups[1].Value, out colors[i])) return false;
+            }
+
+            result = colors;
+            return true;
+        }
+
+        public static string FormatColorArray(IEnumerable<ColorCIE> colors) => string.Concat(colors.Select(c => "{" + c + "}"));
 
         /// <summary>
         /// Parses a GDTF <c>Matrix</c>. Rows of the file map to rows of <see cref="Matrix4x4"/> (row i, column j to Mij),

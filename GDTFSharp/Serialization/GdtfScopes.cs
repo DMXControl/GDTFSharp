@@ -13,5 +13,29 @@ namespace GDTFSharp.Serialization
 
         /// <summary>Starting point: the Attributes node. Path: <c>Attribute</c>.</summary>
         public static readonly ReferenceScope<GdtfAttribute> Attributes = new ReferenceScope<GdtfAttribute>("Attributes");
+
+        /// <summary>Starting point: the Wheels node. Path: <c>Wheel</c>.</summary>
+        public static readonly ReferenceScope<Wheel> Wheels = new ReferenceScope<Wheel>("Wheels");
+
+        /// <summary>Starting point: the Emitters node. Path: <c>Emitter</c>.</summary>
+        public static readonly ReferenceScope<Emitter> Emitters = new ReferenceScope<Emitter>("Emitters");
+
+        /// <summary>Starting point: the Filters node. Path: <c>Filter</c>.</summary>
+        public static readonly ReferenceScope<Filter> Filters = new ReferenceScope<Filter>("Filters");
+
+        /// <summary>The default and the additional color spaces. Path: <c>ColorSpace</c>.</summary>
+        public static readonly ReferenceScope<ColorSpace> ColorSpaces = new ReferenceScope<ColorSpace>("ColorSpaces");
+
+        /// <summary>Starting point: the Gamuts node. Path: <c>Gamut</c>.</summary>
+        public static readonly ReferenceScope<Gamut> Gamuts = new ReferenceScope<Gamut>("Gamuts");
+
+        /// <summary>Starting point: the DMXProfiles node. Path: <c>DMXProfile</c>.</summary>
+        public static readonly ReferenceScope<DmxProfile> DmxProfiles = new ReferenceScope<DmxProfile>("DMXProfiles");
+
+        /// <summary>Starting point: the Connectors node. Path: <c>Connector</c>.</summary>
+        public static readonly ReferenceScope<Connector> Connectors = new ReferenceScope<Connector>("Connectors");
+
+        /// <summary>Starting point: the Models node. Path: <c>Model</c>.</summary>
+        public static readonly ReferenceScope<Model> Models = new ReferenceScope<Model>("Models");
     }
 }

@@ -102,7 +102,8 @@ public class ArchiveTests
     public void ReadsRealFixturesWithoutErrors(string fileName)
     {
         var result = GdtfArchive.Load(TestData.RequireExternal(fileName));
-        Assert.DoesNotContain(result.Diagnostics, d => d.Severity == GdtfDiagnosticSeverity.Error);
+        Assert.DoesNotContain(result.Diagnostics,
+            d => d.Severity != GdtfDiagnosticSeverity.Info && !TestData.IsKnownDefect(fileName, d));
         Assert.NotEmpty(result.Archive.Document.FixtureType.UnparsedSections);
     }
 
@@ -125,7 +126,21 @@ public class ArchiveTests
         Assert.Equal(original.Resources.Keys.OrderBy(k => k), reread.Resources.Keys.OrderBy(k => k));
         foreach (var (path, content) in original.Resources) Assert.Equal(content, reread.Resources[path]);
 
-        // Modelled sections: writing what was read back gives the same XML again.
+        // Writing what was read back gives the same XML again.
         Assert.Equal(GdtfWriter.WriteToString(original.Document), GdtfWriter.WriteToString(reread.Document));
+    }
+
+    [Theory]
+    [MemberData(nameof(TestData.ExternalFixtureNames), MemberType = typeof(TestData))]
+    public void RealFixturesAreWrittenWithoutLoss(string fileName)
+    {
+        var path = TestData.RequireExternal(fileName);
+        XElement original;
+        using (var zip = ZipFile.OpenRead(path))
+        using (var stream = zip.GetEntry(GdtfArchive.DescriptionFileName)!.Open())
+            original = XDocument.Load(stream).Root!.Element("FixtureType")!;
+
+        var written = GdtfWriter.ToXDocument(GdtfArchive.Load(path).Archive.Document).Root!.Element("FixtureType")!;
+        XmlEquivalence.AssertEquivalent(original, written, TestData.KnownDifferences(fileName));
     }
 }

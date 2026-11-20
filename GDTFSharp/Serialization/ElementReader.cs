@@ -78,6 +78,19 @@ namespace GDTFSharp.Serialization
         /// <summary>
         /// Reads a <see cref="Types.Name"/>. Names with characters outside Annex C are kept as they are and reported as a warning.
         /// </summary>
+        /// <summary>Reads an optional <see cref="Types.Name"/>; missing or empty gives <c>null</c>.</summary>
+        public Name? OptionalName(string name)
+        {
+            var attribute = Element.Attribute(name);
+            if (attribute == null || attribute.Value.Length == 0)
+            {
+                _consumed.Add(name);
+                return null;
+            }
+
+            return Name(name);
+        }
+
         public Name Name(string name = "Name", Name defaultValue = default, bool required = false)
         {
             var attribute = Take(name);
@@ -143,13 +156,16 @@ namespace GDTFSharp.Serialization
             return Value<Guid?>(name, GdtfFormat.TryParseGuid, null, required);
         }
 
+        public Vector2 Vector2(string name, Vector2 defaultValue = default, bool required = false) =>
+            Value<Vector2>(name, GdtfFormat.TryParseVector2, defaultValue, required);
+
         public Vector3 Vector3(string name, Vector3 defaultValue = default) =>
             Value<Vector3>(name, GdtfFormat.TryParseVector3, defaultValue);
 
         public Matrix4x4 Matrix(string name) => Value<Matrix4x4>(name, GdtfFormat.TryParseMatrix, Matrix4x4.Identity);
 
-        public RotationMatrix Rotation(string name) =>
-            Value<RotationMatrix>(name, RotationMatrix.TryParse, RotationMatrix.Identity);
+        public RotationMatrix Rotation(string name, bool required = false) =>
+            Value<RotationMatrix>(name, RotationMatrix.TryParse, RotationMatrix.Identity, required);
 
         public ColorCIE Color(string name, ColorCIE defaultValue) => Value<ColorCIE>(name, ColorCIE.TryParse, defaultValue);
 

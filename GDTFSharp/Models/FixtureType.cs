@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 using GDTFSharp.Types;
 
@@ -50,9 +51,35 @@ namespace GDTFSharp.Models
         /// <summary>Activation groups, feature groups and Fixture Type Attributes.</summary>
         public AttributeDefinitions AttributeDefinitions { get; } = new AttributeDefinitions();
 
+        /// <summary>Physical or virtual wheels: color, gobo, prism, animation, media server content and others.</summary>
+        public IList<Wheel> Wheels { get; } = new List<Wheel>();
+
+        /// <summary>Emitters, filters, color spaces, gamuts, DMX profiles, CRIs, connectors and device properties.</summary>
+        public PhysicalDescriptions PhysicalDescriptions { get; } = new PhysicalDescriptions();
+
+        /// <summary>Models of the physically separated parts of the device.</summary>
+        public IList<Model> Models { get; } = new List<Model>();
+
+        /// <summary>The history of the fixture type.</summary>
+        public IList<Revision> Revisions { get; } = new List<Revision>();
+
+        /// <summary>
+        /// Fixture type specific presets (XML node <c>FTPreset</c>), kept verbatim because the spec has not defined
+        /// their content yet.
+        /// </summary>
+        public IList<XElement> FTPresets { get; } = new List<XElement>();
+
+        /// <summary>Supported protocols besides DMX.</summary>
+        public Protocols Protocols { get; } = new Protocols();
+
+        public Wheel? FindWheel(Name name) => Wheels.FirstOrDefault(w => w.Name == name);
+
+        public Model? FindModel(Name name) => Models.FirstOrDefault(m => m.Name == name);
+
         /// <summary>
         /// Child sections this version of the library does not model yet, kept verbatim so reading and writing a file
-        /// does not lose them. A section moves out of this list once it is implemented.
+        /// does not lose them. A section moves out of this list once it is implemented. The writer throws if this list
+        /// contains a section that is modelled.
         /// </summary>
         public IList<XElement> UnparsedSections { get; } = new List<XElement>();
 

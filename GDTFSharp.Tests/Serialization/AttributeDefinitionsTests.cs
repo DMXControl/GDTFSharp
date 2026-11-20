@@ -221,8 +221,7 @@ public class AttributeDefinitionsTests
     {
         var path = TestData.RequireExternal(fileName);
         var result = GdtfArchive.Load(path);
-        Assert.DoesNotContain(result.Diagnostics,
-            d => d.Severity != GdtfDiagnosticSeverity.Info || d.Location?.Contains("/AttributeDefinitions") == true);
+        Assert.DoesNotContain(result.Diagnostics, d => d.Location?.Contains("/AttributeDefinitions") == true);
 
         var original = ReadOriginalAttributeDefinitions(path);
         var definitions = result.Archive.Document.FixtureType.AttributeDefinitions;
@@ -282,8 +281,11 @@ public class XmlEquivalenceTests
     [Theory]
     [InlineData("<A X=\"1\" />", "<A />")]
     [InlineData("<A X=\"1\" />", "<A X=\"2\" />")]
+    [InlineData("<A R=\"{1,0,0}{0,1,0}{0,0,1}\" />", "<A R=\"{1,0,0}{0,1,0}{0,0,2}\" />")]
+    [InlineData("<A R=\"{1,0,0}{0,1,0}{0,0,1}\" />", "<A R=\"1,0,0,0,1,0,0,0,1\" />")]
     [InlineData("<A />", "<A Y=\"1\" />")]
     [InlineData("<A><B /></A>", "<A />")]
+    [InlineData("<A><B N=\"1\" /><B N=\"2\" /></A>", "<A><B N=\"2\" /><B N=\"1\" /></A>")]
     [InlineData("<Attribute />", "<Attribute PhysicalUnit=\"Angle\" />")]
     public void DetectsDifferences(string original, string written) =>
         Assert.ThrowsAny<Exception>(() => XmlEquivalence.AssertEquivalent(XElement.Parse(original), XElement.Parse(written)));
@@ -292,7 +294,11 @@ public class XmlEquivalenceTests
     [InlineData("<A C=\"0.225000,0.329000,78.700000\" />", "<A C=\"0.225,0.329,78.7\" />")]
     [InlineData("<Attribute />", "<Attribute PhysicalUnit=\"None\" />")]
     [InlineData("<A R=\"\" />", "<A />")]
+    [InlineData("<A R=\"{1.000000,0.500000,0}{0,1,0}{0,0,1}\" />", "<A R=\"{1,0.5,0}{0,1,0}{0,0,1}\" />")]
+    [InlineData("<A H=\"0xab\" />", "<A H=\"0xAB\" />")]
     [InlineData("<X />", "<X><ActivationGroups /></X>")]
+    [InlineData("<A><B /><C X=\"1\" /></A>", "<A><C X=\"1\" /><B /></A>")]
+    [InlineData("<A><Connectors /></A>", "<A />")]
     public void AcceptsEquivalentForms(string original, string written) =>
         XmlEquivalence.AssertEquivalent(XElement.Parse(original), XElement.Parse(written));
 }

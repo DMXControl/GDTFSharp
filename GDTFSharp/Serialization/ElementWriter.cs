@@ -28,6 +28,7 @@ namespace GDTFSharp.Serialization
 
         public ElementWriter Name(string name, Name value) => String(name, value.Value);
         public ElementWriter Name(Name value) => Name("Name", value);
+        public ElementWriter Name(string name, Name? value) => value == null ? this : Name(name, value.Value);
 
         public ElementWriter Node(string name, NodePath? value) => String(name, value?.ToString());
 
@@ -39,6 +40,7 @@ namespace GDTFSharp.Serialization
         public ElementWriter YesNo(string name, bool value) => String(name, GdtfFormat.FormatYesNo(value));
         public ElementWriter Date(string name, DateTime? value) => value == null ? this : String(name, GdtfFormat.FormatDate(value.Value));
         public ElementWriter Guid(string name, Guid? value) => value == null ? this : String(name, GdtfFormat.FormatGuid(value.Value));
+        public ElementWriter Vector2(string name, Vector2 value) => String(name, GdtfFormat.FormatVector2(value));
         public ElementWriter Vector3(string name, Vector3 value) => String(name, GdtfFormat.FormatVector3(value));
         public ElementWriter Matrix(string name, Matrix4x4 value) => String(name, GdtfFormat.FormatMatrix(value));
         public ElementWriter Rotation(string name, RotationMatrix value) => String(name, value.ToString());
