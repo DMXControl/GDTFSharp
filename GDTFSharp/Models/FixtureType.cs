@@ -47,6 +47,9 @@ namespace GDTFSharp.Models
         /// <summary>Whether other devices can be mounted to this device. Default: true.</summary>
         public bool CanHaveChildren { get; set; } = true;
 
+        /// <summary>Activation groups, feature groups and Fixture Type Attributes.</summary>
+        public AttributeDefinitions AttributeDefinitions { get; } = new AttributeDefinitions();
+
         /// <summary>
         /// Child sections this version of the library does not model yet, kept verbatim so reading and writing a file
         /// does not lose them. A section moves out of this list once it is implemented.

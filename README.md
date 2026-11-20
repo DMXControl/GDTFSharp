@@ -12,7 +12,8 @@ Targets GDTF 1.2 (DIN SPEC 15800:2022). Older files (1.0/1.1) are read; files ar
 | Value types (Name, Node, DMXValue, DMXAddress, ColorCIE, Matrix, Rotation, …) | done |
 | `.gdtf` archive read/write, `description.xml` reader/writer, diagnostics | done |
 | FixtureType header | done |
-| AttributeDefinitions, Wheels, PhysicalDescriptions, Models, Geometries, DMXModes, Revisions, FTPresets, Protocols | not yet modelled; kept verbatim on read and written back unchanged |
+| AttributeDefinitions (ActivationGroups, FeatureGroups/Features, Attributes, SubPhysicalUnits) | done |
+| Wheels, PhysicalDescriptions, Models, Geometries, DMXModes, Revisions, FTPresets, Protocols | not yet modelled; kept verbatim on read and written back unchanged |
 
 ## Usage
 
@@ -22,6 +23,9 @@ foreach (var diagnostic in result.Diagnostics) Console.WriteLine(diagnostic);
 
 var fixtureType = result.Archive.Document.FixtureType;
 Console.WriteLine($"{fixtureType.Manufacturer} {fixtureType.Name}");
+
+foreach (var attribute in fixtureType.AttributeDefinitions.Attributes)
+    Console.WriteLine($"{attribute.Name} ({attribute.Feature?.Path}, {attribute.PhysicalUnit})");
 
 result.Archive.Save("copy.gdtf");
 ```

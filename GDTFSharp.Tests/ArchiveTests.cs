@@ -124,5 +124,8 @@ public class ArchiveTests
 
         Assert.Equal(original.Resources.Keys.OrderBy(k => k), reread.Resources.Keys.OrderBy(k => k));
         foreach (var (path, content) in original.Resources) Assert.Equal(content, reread.Resources[path]);
+
+        // Modelled sections: writing what was read back gives the same XML again.
+        Assert.Equal(GdtfWriter.WriteToString(original.Document), GdtfWriter.WriteToString(reread.Document));
     }
 }

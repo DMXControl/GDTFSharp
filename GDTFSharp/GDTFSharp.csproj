@@ -10,13 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Legacy node classes from the first prototype. They are superseded by the model + reader/writer design
-         and are kept only as a reference until they are ported in Phase 2 (AttributeDefinitions). -->
-    <Compile Remove="Models/Nodes/**" />
-    <None Include="Models/Nodes/**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <InternalsVisibleTo Include="GDTFSharp.Tests" />
   </ItemGroup>
 

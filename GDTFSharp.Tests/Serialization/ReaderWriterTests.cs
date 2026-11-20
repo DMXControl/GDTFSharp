@@ -40,7 +40,7 @@ public class ReaderWriterTests
     {
         var result = GdtfReader.Read(
             "<GDTF DataVersion=\"1.2\"><FixtureType Name=\"X\" FixtureTypeID=\"308EA87D-7164-42DE-8106-A6D273F57A51\" Thumbnail=\"\" RefFT=\"\">" +
-            "<AttributeDefinitions /><Geometries /><DMXModes /></FixtureType></GDTF>");
+            "<AttributeDefinitions><FeatureGroups /><Attributes /></AttributeDefinitions><Geometries /><DMXModes /></FixtureType></GDTF>");
         Assert.Empty(result.Diagnostics);
         var fixture = result.Document.FixtureType;
         Assert.True(fixture.CanHaveChildren);

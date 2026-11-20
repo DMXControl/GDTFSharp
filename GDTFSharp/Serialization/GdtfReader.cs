@@ -25,7 +25,7 @@ namespace GDTFSharp.Serialization
     }
 
     /// <summary>Reads a GDTF <c>description.xml</c> into a <see cref="GdtfDocument"/>.</summary>
-    public static class GdtfReader
+    public static partial class GdtfReader
     {
         public static GdtfReadResult Read(Stream xml, GdtfReadOptions? options = null)
         {
@@ -100,6 +100,7 @@ namespace GDTFSharp.Serialization
             reader.ReportUnknownAttributes();
 
             var lastIndex = -1;
+            var readSections = new HashSet<string>(StringComparer.Ordinal);
             foreach (var section in element.Elements())
             {
                 var name = section.Name.LocalName;
@@ -110,8 +111,24 @@ namespace GDTFSharp.Serialization
                     context.Warning($"Section '{name}' is out of the order the spec requires; it is written in order.", section);
                 lastIndex = Math.Max(lastIndex, index);
 
-                // Sections are moved out of here as they get implemented.
-                fixtureType.UnparsedSections.Add(new XElement(section));
+                switch (name)
+                {
+                    case "AttributeDefinitions" when !readSections.Contains(name):
+                        ReadAttributeDefinitions(new ElementReader(section, context), fixtureType.AttributeDefinitions);
+                        break;
+                    default:
+                        if (index >= 0 && readSections.Contains(name))
+                        {
+                            context.Warning($"Section '{name}' appears more than once; only the first one is read.", section);
+                            continue;
+                        }
+
+                        // Sections not modelled yet are kept verbatim.
+                        fixtureType.UnparsedSections.Add(new XElement(section));
+                        break;
+                }
+
+                readSections.Add(name);
             }
 
             foreach (var mandatory in FixtureType.MandatorySections)

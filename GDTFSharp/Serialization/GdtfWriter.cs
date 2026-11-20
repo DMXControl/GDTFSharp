@@ -11,7 +11,7 @@ using GDTFSharp.Types;
 namespace GDTFSharp.Serialization
 {
     /// <summary>Writes a <see cref="GdtfDocument"/> as a GDTF <c>description.xml</c>, always in <see cref="DataVersion.Current"/> format.</summary>
-    public static class GdtfWriter
+    public static partial class GdtfWriter
     {
         public static XDocument ToXDocument(GdtfDocument document)
         {
@@ -57,7 +57,7 @@ namespace GDTFSharp.Serialization
                 .YesNo("CanHaveChildren", fixtureType.CanHaveChildren);
 
             var sections = new List<XElement>();
-            // Implemented sections are added to 'sections' here as they get implemented.
+            sections.Add(WriteAttributeDefinitions(fixtureType.AttributeDefinitions));
             sections.AddRange(fixtureType.UnparsedSections.Select(s => new XElement(s)));
 
             foreach (var mandatory in FixtureType.MandatorySections)

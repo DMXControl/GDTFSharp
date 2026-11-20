@@ -15,6 +15,7 @@ namespace GDTFSharp.Serialization
     public sealed class ElementReader
     {
         private readonly HashSet<string> _consumed = new HashSet<string>(StringComparer.Ordinal);
+        private readonly HashSet<string> _consumedChildren = new HashSet<string>(StringComparer.Ordinal);
 
         public delegate bool TryParser<T>(string? value, out T result);
 
@@ -179,6 +180,48 @@ namespace GDTFSharp.Serialization
 
         public T Enum<T>(string name, T defaultValue, bool required = false) where T : struct, System.Enum =>
             Value<T>(name, GdtfFormat.TryParseEnum, defaultValue, required);
+
+        /// <summary>The child elements named <paramref name="name"/>, each wrapped in its own reader.</summary>
+        public IEnumerable<ElementReader> Children(string name)
+        {
+            _consumedChildren.Add(name);
+            return Element.Elements(name).Select(e => new ElementReader(e, Context)).ToList();
+        }
+
+        /// <summary>
+        /// The single child element named <paramref name="name"/>, or <c>null</c>. Reports an error when it is
+        /// <paramref name="required"/> and missing, and a warning when there is more than one (the first one is used).
+        /// </summary>
+        public ElementReader? Child(string name, bool required = false)
+        {
+            _consumedChildren.Add(name);
+            var elements = Element.Elements(name).ToList();
+            if (elements.Count == 0)
+            {
+                if (required) Context.Error($"Required child '{name}' is missing.", Element);
+                return null;
+            }
+
+            if (elements.Count > 1) Context.Warning($"'{name}' appears {elements.Count} times; only the first one is read.", elements[1]);
+            return new ElementReader(elements[0], Context);
+        }
+
+        /// <summary>Reports every child element that was not read as an <see cref="GdtfDiagnosticSeverity.Info"/> diagnostic.</summary>
+        public void ReportUnknownChildren()
+        {
+            foreach (var child in Element.Elements())
+            {
+                if (_consumedChildren.Contains(child.Name.LocalName)) continue;
+                Context.Info($"Unknown element '{child.Name.LocalName}' was ignored.", child);
+            }
+        }
+
+        /// <summary>Reports every unread attribute and child element. Call once the element is fully read.</summary>
+        public void ReportUnknown()
+        {
+            ReportUnknownAttributes();
+            ReportUnknownChildren();
+        }
 
         /// <summary>Reports every attribute that was not read as an <see cref="GdtfDiagnosticSeverity.Info"/> diagnostic.</summary>
         public void ReportUnknownAttributes()
