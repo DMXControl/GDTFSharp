@@ -15,6 +15,24 @@ internal static class XmlEquivalence
         new Dictionary<(string, string), string>
         {
             [("*", "Position")] = "{1,0,0,0}{0,1,0,0}{0,0,1,0}{0,0,0,1}",
+            [("DMXChannel", "DMXBreak")] = "1",
+            [("DMXChannel", "Offset")] = "None",
+            [("DMXChannel", "Highlight")] = "None",
+            [("LogicalChannel", "Snap")] = "No",
+            [("LogicalChannel", "Master")] = "None",
+            [("LogicalChannel", "MibFade")] = "0",
+            [("LogicalChannel", "DMXChangeTimeLimit")] = "0",
+            [("ChannelFunction", "Attribute")] = "NoFeature",
+            [("ChannelFunction", "OriginalAttribute")] = "",
+            [("ChannelFunction", "DMXFrom")] = "0/1",
+            [("ChannelFunction", "PhysicalFrom")] = "0",
+            [("ChannelFunction", "PhysicalTo")] = "1",
+            [("ChannelFunction", "RealFade")] = "0",
+            [("ChannelFunction", "RealAcceleration")] = "0",
+            [("ChannelFunction", "ModeFrom")] = "0/1",
+            [("ChannelFunction", "ModeTo")] = "0/1",
+            [("ChannelSet", "DMXFrom")] = "0/1",
+            [("MacroDMXStep", "Duration")] = "1",
             [("Beam", "LampType")] = "Discharge",
             [("Beam", "PowerConsumption")] = "1000",
             [("Beam", "LuminousFlux")] = "10000",
@@ -68,11 +86,21 @@ internal static class XmlEquivalence
             [("SubPhysicalUnit", "PhysicalTo")] = "1",
         };
 
+    /// <summary>
+    /// Changes the writer makes when upgrading GDTF 1.0 files: the DMXChannel Default moves to the channel functions
+    /// (and may make another function the InitialFunction).
+    /// </summary>
+    public static readonly ISet<(string Element, string Attribute)> MayDrop = new HashSet<(string, string)> { ("DMXChannel", "Default") };
+
+    public static readonly ISet<(string Element, string Attribute)> MayAdd =
+        new HashSet<(string, string)> { ("ChannelFunction", "Default"), ("DMXChannel", "InitialFunction") };
+
     /// <summary>Elements the writer always writes, even when empty.</summary>
     public static readonly ISet<string> AlwaysWritten = new HashSet<string>
     {
         "ActivationGroups", "Wheels", "PhysicalDescriptions", "Models", "Revisions", "FTPresets", "Protocols", "Geometries",
-        "DMXModes", "Emitters", "Filters", "AdditionalColorSpaces", "Gamuts", "DMXProfiles", "CRIs", "Properties"
+        "DMXModes", "Emitters", "Filters", "AdditionalColorSpaces", "Gamuts", "DMXProfiles", "CRIs", "Properties",
+        "Relations", "FTMacros"
     };
 
     /// <summary>Elements the writer leaves out when they are empty (obsolete sections).</summary>
@@ -100,8 +128,11 @@ internal static class XmlEquivalence
             var writtenValue = written.Attribute(attribute.Name)?.Value;
             if (writtenValue == null)
             {
-                // Empty optional values (e.g. RefFT="") carry no information.
-                if (attribute.Value.Trim().Length > 0) differences.Add($"{path}@{attribute.Name}: '{attribute.Value}' was dropped");
+                // Empty optional values (e.g. RefFT="") and spec defaults carry no information.
+                var key = (original.Name.LocalName, attribute.Name.LocalName);
+                var isDefault = (Defaults.TryGetValue(key, out var d) || Defaults.TryGetValue(("*", key.Item2), out d)) && SameValue(d, attribute.Value);
+                if (attribute.Value.Trim().Length > 0 && !isDefault && !MayDrop.Contains(key))
+                    differences.Add($"{path}@{attribute.Name}: '{attribute.Value}' was dropped");
             }
             else if (!SameValue(attribute.Value, writtenValue))
             {
@@ -112,6 +143,7 @@ internal static class XmlEquivalence
         foreach (var attribute in written.Attributes())
         {
             if (original.Attribute(attribute.Name) != null) continue;
+            if (MayAdd.Contains((written.Name.LocalName, attribute.Name.LocalName))) continue;
             if (!(Defaults.TryGetValue((written.Name.LocalName, attribute.Name.LocalName), out var defaultValue) ||
                   Defaults.TryGetValue(("*", attribute.Name.LocalName), out defaultValue)) ||
                 !SameValue(defaultValue, attribute.Value))
@@ -149,6 +181,8 @@ internal static class XmlEquivalence
     private static bool SameValue(string original, string written)
     {
         if (original == written) return true;
+        // "None" is the explicit form of an empty offset list or DMX value.
+        if (original.Trim().Length == 0 && written == "None") return true;
         if (GdtfFormat.TryParseHex(original, out var hexA) && original.StartsWith("0x", StringComparison.OrdinalIgnoreCase) &&
             GdtfFormat.TryParseHex(written, out var hexB))
             return hexA == hexB;

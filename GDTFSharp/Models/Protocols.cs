@@ -48,11 +48,8 @@ namespace GDTFSharp.Models
     {
         public ulong Value { get; set; }
 
-        /// <summary>
-        /// Name of the DMX mode that can be used with this software version, as written in the file.
-        /// Kept as a name until DMX modes are modelled; it will then become a reference to the mode.
-        /// </summary>
-        public Name DmxModeName { get; set; }
+        /// <summary>The DMX mode that can be used with this software version.</summary>
+        public DmxMode? DmxMode { get; set; }
     }
 
     /// <summary>A protocol whose values map 1:1 to DMX values unless custom maps are given (Art-Net, sACN).</summary>

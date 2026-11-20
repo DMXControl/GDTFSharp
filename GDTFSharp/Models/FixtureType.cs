@@ -72,6 +72,11 @@ namespace GDTFSharp.Models
         /// <summary>Models of the physically separated parts of the device.</summary>
         public IList<Model> Models { get; } = new List<Model>();
 
+        /// <summary>The DMX modes of the device.</summary>
+        public IList<DmxMode> DmxModes { get; } = new List<DmxMode>();
+
+        public DmxMode? FindDmxMode(Name name) => DmxModes.FirstOrDefault(m => m.Name == name);
+
         /// <summary>The history of the fixture type.</summary>
         public IList<Revision> Revisions { get; } = new List<Revision>();
 

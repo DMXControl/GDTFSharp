@@ -125,6 +125,9 @@ namespace GDTFSharp.Serialization
                     case "Geometries" when !readSections.Contains(name):
                         ReadGeometries(new ElementReader(section, context), fixtureType);
                         break;
+                    case "DMXModes" when !readSections.Contains(name):
+                        ReadDmxModes(new ElementReader(section, context), fixtureType);
+                        break;
                     case "Models" when !readSections.Contains(name):
                         ReadModels(new ElementReader(section, context), fixtureType);
                         break;

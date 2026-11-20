@@ -17,6 +17,7 @@ namespace GDTFSharp.Serialization
         private readonly List<GdtfDiagnostic> _diagnostics = new List<GdtfDiagnostic>();
         private readonly Dictionary<(object Scope, NodePath Path), object> _index = new Dictionary<(object, NodePath), object>();
         private readonly List<Action> _pendingReferences = new List<Action>();
+        private readonly List<Action> _afterResolve = new List<Action>();
 
         public GdtfReadOptions Options { get; }
 
@@ -81,12 +82,19 @@ namespace GDTFSharp.Serialization
             });
         }
 
-        /// <summary>Pass 2. Resolves every reference queued with <see cref="Resolve{T}"/>.</summary>
+        /// <summary>Queues work that needs resolved references, e.g. a lookup inside a referenced node. Runs after pass 2.</summary>
+        public void AfterResolve(Action action) => _afterResolve.Add(action);
+
+        /// <summary>Pass 2. Resolves every reference queued with <see cref="Resolve{T}"/>, then runs <see cref="AfterResolve"/> work.</summary>
         public void ResolveReferences()
         {
             var pending = _pendingReferences.ToList();
             _pendingReferences.Clear();
             foreach (var resolve in pending) resolve();
+
+            var after = _afterResolve.ToList();
+            _afterResolve.Clear();
+            foreach (var action in after) action();
         }
 
         private static int? GetLine(XObject? source) =>

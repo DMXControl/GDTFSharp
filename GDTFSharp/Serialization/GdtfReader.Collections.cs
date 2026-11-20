@@ -134,11 +134,9 @@ namespace GDTFSharp.Serialization
                     var version = new RdmSoftwareVersion { Value = versionReader.Hex("Value") };
                     foreach (var personalityReader in versionReader.Children("DMXPersonality"))
                     {
-                        version.DmxPersonalities.Add(new DmxPersonality
-                        {
-                            Value = personalityReader.Hex("Value"),
-                            DmxModeName = personalityReader.Name("DMXMode")
-                        });
+                        var personality = new DmxPersonality { Value = personalityReader.Hex("Value") };
+                        personalityReader.Reference("DMXMode", GdtfScopes.DmxModes, m => personality.DmxMode = m);
+                        version.DmxPersonalities.Add(personality);
                         personalityReader.ReportUnknown();
                     }
 

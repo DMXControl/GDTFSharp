@@ -18,7 +18,8 @@ Targets GDTF 1.2 (DIN SPEC 15800:2022). Older files (1.0/1.1) are read; files ar
 | FTPresets | undefined in the spec; kept verbatim |
 | PhysicalDescriptions (emitters, filters, measurements, color spaces, gamuts, DMX profiles, CRIs, connectors, properties) | done |
 | Geometries (all 18 geometry types, geometry references with breaks, laser protocols, pin patches) | done |
-| DMXModes | not yet modelled; kept verbatim on read and written back unchanged |
+| DMXModes (channels, logical channels, channel functions, channel sets, sub channel sets, relations, macros) | done |
+| Unknown or vendor-specific sections | kept verbatim on read and written back unchanged |
 
 ## Usage
 
@@ -29,8 +30,12 @@ foreach (var diagnostic in result.Diagnostics) Console.WriteLine(diagnostic);
 var fixtureType = result.Archive.Document.FixtureType;
 Console.WriteLine($"{fixtureType.Manufacturer} {fixtureType.Name}");
 
-foreach (var attribute in fixtureType.AttributeDefinitions.Attributes)
-    Console.WriteLine($"{attribute.Name} ({attribute.Feature?.Path}, {attribute.PhysicalUnit})");
+foreach (var mode in fixtureType.DmxModes)
+{
+    Console.WriteLine($"{mode.Name}: {string.Join(", ", mode.GetFootprint().Select(f => $"break {f.Key}: {f.Value} ch"))}");
+    foreach (var channel in mode.Channels)
+        Console.WriteLine($"  {string.Join(",", channel.Offsets)} {channel.Name}");
+}
 
 result.Archive.Save("copy.gdtf");
 ```
@@ -38,6 +43,10 @@ result.Archive.Save("copy.gdtf");
 Geometry positions are `System.Numerics.Matrix4x4` transforms in the usual .NET convention (translation in
 M41–M43, `Vector3.Transform` applies them, `child * parent` composes them). The reader and writer convert from and to
 GDTF's matrix layout, which is the transpose. `geometry.AbsolutePosition` gives the transform relative to the fixture.
+
+DMX helpers: `ChannelFunction.DmxTo` / `ChannelSet.DmxTo` give the computed end of a DMX range, and
+`DmxMode.GetChannelInstances()` / `GetFootprint()` expand channels across geometry references into real addresses.
+Files older than GDTF 1.1 are upgraded on read: the DMX channel `Default` moves to the matching channel function.
 
 Reading is lenient by default: problems are collected as diagnostics. Pass `new GdtfReadOptions { Strict = true }`
 to throw on the first error.

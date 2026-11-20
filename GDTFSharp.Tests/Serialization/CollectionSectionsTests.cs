@@ -15,8 +15,13 @@ public class CollectionSectionsTests
 
     private const string Footer = "</FixtureType></GDTF>";
 
+    private const string GeometriesAndModes =
+        "<Geometries><Geometry Name=\"Body\" /></Geometries><DMXModes>" +
+        "<DMXMode Name=\"Mode 1\" Geometry=\"Body\"><DMXChannels /></DMXMode>" +
+        "<DMXMode Name=\"Mode 2\" Geometry=\"Body\"><DMXChannels /></DMXMode></DMXModes>";
+
     private static GdtfReadResult Read(string sections) =>
-        GdtfReader.Read(Header + sections.Replace("<!--GEOMETRIES-->", "<Geometries /><DMXModes />") + Footer);
+        GdtfReader.Read(Header + sections.Replace("<!--GEOMETRIES-->", GeometriesAndModes) + Footer);
 
     private static XElement Written(GdtfDocument document, string section) =>
         GdtfWriter.ToXDocument(document).Root!.Element("FixtureType")!.Element(section)!;
@@ -257,7 +262,7 @@ public class CollectionSectionsTests
         Assert.Equal(0x91UL, rdm.DeviceModelId);
         var version = Assert.Single(rdm.SoftwareVersions);
         Assert.Equal(0x1AUL, version.Value);
-        Assert.Equal(new[] { "Mode 1", "Mode 2" }, version.DmxPersonalities.Select(p => p.DmxModeName.Value));
+        Assert.Equal(result.Document.FixtureType.DmxModes, version.DmxPersonalities.Select(p => p.DmxMode));
         Assert.Equal(2UL, version.DmxPersonalities[1].Value);
 
         var map = Assert.Single(protocols.ArtNet!.Maps);
@@ -324,7 +329,11 @@ public class CollectionSectionsTests
 
         var rdm = new RdmProtocol { ManufacturerId = 0x5253, DeviceModelId = 0x91 };
         var version = new RdmSoftwareVersion { Value = 1 };
-        version.DmxPersonalities.Add(new DmxPersonality { Value = 1, DmxModeName = new Name("Standard") });
+        var body = new Geometry(new Name("Body"));
+        fixture.Geometries.Add(body);
+        var mode = new DmxMode(new Name("Standard")) { Geometry = body };
+        fixture.DmxModes.Add(mode);
+        version.DmxPersonalities.Add(new DmxPersonality { Value = 1, DmxMode = mode });
         rdm.SoftwareVersions.Add(version);
         fixture.Protocols.Rdm = rdm;
         var artNet = new ValueMappedProtocol();

@@ -41,6 +41,9 @@ namespace GDTFSharp.Serialization
         /// <summary>Top-level geometries only, by name (GeometryReference, DMXMode).</summary>
         public static readonly ReferenceScope<Geometry> TopLevelGeometries = new ReferenceScope<Geometry>("top-level Geometries");
 
+        /// <summary>Starting point: the DMXModes node. Path: <c>DMXMode</c>.</summary>
+        public static readonly ReferenceScope<DmxMode> DmxModes = new ReferenceScope<DmxMode>("DMXModes");
+
         /// <summary>Starting point: the Models node. Path: <c>Model</c>.</summary>
         public static readonly ReferenceScope<Model> Models = new ReferenceScope<Model>("Models");
     }

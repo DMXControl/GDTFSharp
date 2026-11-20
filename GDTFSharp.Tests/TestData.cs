@@ -41,7 +41,19 @@ internal static class TestData
         new Dictionary<string, (string, string)[]>
         {
             // A slot color written by a C++ tool from NaN values; the reader drops it, so the slot is white.
-            ["allWorking.gdtf"] = new[] { ("'-nan(ind),-nan(ind),0.000000'", "Slot[Tokyo Blue]@Color") }
+            ["allWorking.gdtf"] = new[]
+            {
+                ("'-nan(ind),-nan(ind),0.000000'", "Slot[Tokyo Blue]@Color"),
+                // Negative DMX values; the reader drops them, so those channels have no highlight.
+                ("is not a valid value for 'Highlight'", "DMXChannel@Highlight")
+            },
+            // Two channel functions named "NoFeature" in one logical channel, so their paths clash.
+            // A channel set name with commas, which a Name does not allow (kept as is).
+            ["Robe lighting s.r.o.@BMFL Spot.gdtf"] = new[]
+            {
+                ("Duplicate name 'Head_Gobo1Pos.Gobo1Pos.NoFeature'", "\u0000"),
+                ("'Time from 0,2 s to 25,4 sec / Speed from max to min' contains characters", "\u0000")
+            }
         };
 
     public static bool IsKnownDefect(string fileName, GdtfDiagnostic diagnostic) =>

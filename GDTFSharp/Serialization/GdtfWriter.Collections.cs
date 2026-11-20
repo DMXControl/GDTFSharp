@@ -71,7 +71,7 @@ namespace GDTFSharp.Serialization
                         .Hex("Value", version.Value)
                         .Children(version.DmxPersonalities.Select(personality => (XElement)new ElementWriter("DMXPersonality")
                             .Hex("Value", personality.Value)
-                            .Name("DMXMode", personality.DmxModeName))))));
+                            .Name("DMXMode", personality.DmxMode?.Name))))));
             }
 
             writer.Child(WriteValueMappedProtocol("Art-Net", protocols.ArtNet));

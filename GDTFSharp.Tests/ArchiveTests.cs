@@ -104,7 +104,8 @@ public class ArchiveTests
         var result = GdtfArchive.Load(TestData.RequireExternal(fileName));
         Assert.DoesNotContain(result.Diagnostics,
             d => d.Severity != GdtfDiagnosticSeverity.Info && !TestData.IsKnownDefect(fileName, d));
-        Assert.NotEmpty(result.Archive.Document.FixtureType.UnparsedSections);
+        // Every section of the spec is modelled now.
+        Assert.Empty(result.Archive.Document.FixtureType.UnparsedSections);
     }
 
     [Theory]
